@@ -650,15 +650,6 @@
         return (Date.now() - t) / 864e5;
     }
 
-    function sortByUpdated(apps) {
-        return [...apps].sort((a, b) => {
-            const ta = new Date(a.updatedDate || a.updatedAt || 0).getTime() || 0;
-            const tb = new Date(b.updatedDate || b.updatedAt || 0).getTime() || 0;
-            if (tb !== ta) return tb - ta;
-            return getGithubStars(b) - getGithubStars(a);
-        });
-    }
-
     function setHomeBrowseVisible(on) {
         ['catalogStats', 'discoverSection'].forEach(id => {
             const el = document.getElementById(id);
