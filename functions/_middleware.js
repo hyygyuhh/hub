@@ -1,5 +1,6 @@
 import { isIpAllowed, requiresAdminIpGate, clientIp } from './_lib/ip.js';
 import { requireAdmin } from './_lib/auth.js';
+import { handleSitemap, handleRobots, handleAppSeoPage } from './_lib/seo-pages.js';
 
 function isAdminConsolePath(pathname) {
   if (pathname === '/admin' || pathname === '/admin/') return true;
@@ -22,6 +23,18 @@ export async function onRequest(context) {
   const { request, env, next } = context;
   const url = new URL(request.url);
   const { pathname } = url;
+
+  // Dynamic SEO endpoints (must run before static SPA fallback).
+  if (pathname === '/sitemap.xml' && request.method === 'GET') {
+    return handleSitemap(request, env);
+  }
+  if (pathname === '/robots.txt' && request.method === 'GET') {
+    return handleRobots(request);
+  }
+  if (pathname.startsWith('/a/') && request.method === 'GET') {
+    const id = pathname.slice(3).replace(/\/$/, '');
+    if (id) return handleAppSeoPage(request, env, id);
+  }
 
   if (requiresAdminIpGate(pathname) && !isIpAllowed(request, env)) {
     const ip = clientIp(request) || 'unknown';
