@@ -97,8 +97,8 @@
       state.me = await api('/admin/me');
       showAppShell();
       updateSecurityUi();
-      await refreshAll();
       setView('dashboard');
+      await refreshAll();
       return true;
     } catch (e) {
       if (e.status === 403) {
@@ -511,8 +511,8 @@
         state.me = await api('/admin/me');
         showAppShell();
         updateSecurityUi();
-        await refreshAll();
         setView('dashboard');
+        await refreshAll();
         toast('登录成功', 'ok');
       } catch (ex) {
         err.textContent = ex.message;
