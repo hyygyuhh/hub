@@ -1,2 +1,4 @@
 ADMIN_PASSWORD=change-me
+# 可选：管理后台 IP 白名单，逗号分隔。留空不限制。
+# ADMIN_ALLOWED_IPS=1.2.3.4,5.6.7.0/24
 ANALYTICS_DASHBOARD_URL=

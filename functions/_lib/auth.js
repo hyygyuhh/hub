@@ -106,8 +106,9 @@ async function requireAdmin(request, env) {
 }
 
 async function timingSafeEqual(a, b) {
-  const ah = await sha256Hex(String(a || ''));
-  const bh = await sha256Hex(String(b || ''));
+  // Trim to avoid trailing newlines from secret piping / form paste.
+  const ah = await sha256Hex(String(a == null ? '' : a).trim());
+  const bh = await sha256Hex(String(b == null ? '' : b).trim());
   if (ah.length !== bh.length) return false;
   let out = 0;
   for (let i = 0; i < ah.length; i++) out |= ah.charCodeAt(i) ^ bh.charCodeAt(i);

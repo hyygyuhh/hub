@@ -14,15 +14,19 @@
 <body>
     <div id="loginView" class="login-view">
         <form id="loginForm" class="login-card" autocomplete="on">
-            <p class="login-brand">架集 · 管理后台</p>
-            <h1>登录</h1>
-            <p class="login-hint">使用部署时配置的管理员密码</p>
+            <div class="login-mark" aria-hidden="true"></div>
+            <p class="login-brand">架集 ShelfHub</p>
+            <h1>管理后台</h1>
+            <p class="login-hint">密码为 Cloudflare 上的 <code>ADMIN_PASSWORD</code>，不是本地 <code>.dev.vars</code></p>
             <label class="field">
                 <span>密码</span>
-                <input type="password" id="loginPassword" name="password" required autocomplete="current-password">
+                <div class="password-row">
+                    <input type="password" id="loginPassword" name="password" required autocomplete="current-password" placeholder="输入管理员密码">
+                    <button type="button" class="btn-ghost btn-icon" id="togglePassword" aria-label="显示密码">显示</button>
+                </div>
             </label>
             <p class="form-error" id="loginError" hidden></p>
-            <button type="submit" class="btn-primary" id="loginBtn">进入后台</button>
+            <button type="submit" class="btn-primary btn-block" id="loginBtn">登录</button>
         </form>
     </div>
 
@@ -30,21 +34,29 @@
         <aside class="sidebar">
             <div class="sidebar-brand">
                 <strong>架集</strong>
-                <span>ShelfHub Admin</span>
+                <span>管理后台</span>
             </div>
             <nav class="sidebar-nav">
                 <button type="button" class="nav-btn is-active" data-view="dashboard">仪表盘</button>
                 <button type="button" class="nav-btn" data-view="apps">应用管理</button>
-                <a class="nav-link" href="../" target="_blank" rel="noopener">打开前台</a>
+                <button type="button" class="nav-btn" data-view="security">安全设置</button>
+                <a class="nav-link" href="../" target="_blank" rel="noopener">打开前台 ↗</a>
             </nav>
-            <button type="button" class="btn-ghost" id="logoutBtn">退出登录</button>
+            <div class="sidebar-meta">
+                <span class="muted" id="sidebarIp">IP —</span>
+                <button type="button" class="btn-ghost" id="logoutBtn">退出登录</button>
+            </div>
         </aside>
 
         <main class="main">
             <header class="topbar">
-                <h1 id="viewTitle">仪表盘</h1>
+                <div>
+                    <h1 id="viewTitle">仪表盘</h1>
+                    <p class="topbar-sub" id="viewSubtitle">站点概况与热门数据</p>
+                </div>
                 <div class="topbar-actions">
-                    <button type="button" class="btn-primary" id="newAppBtn" hidden>新增应用</button>
+                    <button type="button" class="btn-secondary" id="refreshBtn" title="刷新数据">刷新</button>
+                    <button type="button" class="btn-primary" id="newAppBtn" hidden>+ 新增应用</button>
                 </div>
             </header>
 
@@ -83,18 +95,19 @@
 
             <section id="appsView" class="panel" hidden>
                 <div class="toolbar">
-                    <input type="search" id="appSearch" placeholder="搜索名称 / ID…" class="search-input">
+                    <input type="search" id="appSearch" placeholder="搜索名称 / ID / 分类…" class="search-input">
                     <select id="platformFilter">
                         <option value="all">全部平台</option>
                         <option value="windows">Windows</option>
                         <option value="android">Android</option>
                     </select>
+                    <span class="muted" id="appsCount"></span>
                 </div>
                 <div class="table-wrap">
                     <table class="apps-table">
                         <thead>
                             <tr>
-                                <th>名称</th>
+                                <th>应用</th>
                                 <th>平台</th>
                                 <th>分类</th>
                                 <th>镜像</th>
@@ -105,96 +118,143 @@
                         <tbody id="appsTableBody"></tbody>
                     </table>
                 </div>
-                <p class="muted" id="appsEmpty" hidden>暂无应用，点击「新增应用」开始录入。</p>
+                <p class="empty-hint" id="appsEmpty" hidden>暂无应用，点击右上角「新增应用」开始录入。</p>
             </section>
 
-            <section id="editorView" class="panel" hidden>
-                <form id="appForm" class="app-form">
-                    <div class="form-grid">
-                        <label class="field">
-                            <span>应用 ID *</span>
-                            <input name="id" id="fieldId" required pattern="[A-Za-z0-9][A-Za-z0-9_-]{1,62}" placeholder="vscode">
-                        </label>
-                        <label class="field">
-                            <span>名称 *</span>
-                            <input name="name" id="fieldName" required>
-                        </label>
-                        <label class="field">
-                            <span>平台 *</span>
-                            <select name="platform" id="fieldPlatform" required>
-                                <option value="windows">Windows</option>
-                                <option value="android">Android</option>
-                            </select>
-                        </label>
-                        <label class="field">
-                            <span>分类 *</span>
-                            <select name="category" id="fieldCategory" required>
-                                <option value="development">development · 开发工具</option>
-                                <option value="office">office · 办公效率</option>
-                                <option value="design">design · 设计创意</option>
-                                <option value="entertainment">entertainment · 影音娱乐</option>
-                                <option value="system">system · 系统工具</option>
-                                <option value="network">network · 网络传输</option>
-                                <option value="security">security · 安全隐私</option>
-                            </select>
-                        </label>
-                        <label class="field">
-                            <span>分类名称 *</span>
-                            <input name="categoryName" id="fieldCategoryName" required placeholder="开发工具">
-                        </label>
-                        <label class="field">
-                            <span>版本</span>
-                            <input name="version" id="fieldVersion" placeholder="1.0.0">
-                        </label>
-                        <label class="field">
-                            <span>大小</span>
-                            <input name="size" id="fieldSize" placeholder="85MB">
-                        </label>
-                        <label class="field">
-                            <span>更新日期</span>
-                            <input name="updatedDate" id="fieldUpdatedDate" type="date">
-                        </label>
-                        <label class="field">
-                            <span>GitHub Star</span>
-                            <input name="githubStars" id="fieldGithubStars" type="number" min="0" value="0">
-                        </label>
-                        <label class="field field-span-2">
-                            <span>GitHub 仓库</span>
-                            <input name="githubUrl" id="fieldGithubUrl" placeholder="https://github.com/org/repo">
-                        </label>
-                        <label class="field field-span-2">
-                            <span>简介 *</span>
-                            <textarea name="description" id="fieldDescription" rows="3" required></textarea>
-                        </label>
-                        <label class="field field-span-2">
-                            <span>特性（每行一条）</span>
-                            <textarea name="features" id="fieldFeatures" rows="4" placeholder="智能代码补全&#10;Git集成"></textarea>
-                        </label>
-                        <label class="field field-span-2">
-                            <span>图标（SVG 或图片 URL）</span>
-                            <textarea name="icon" id="fieldIcon" rows="3" placeholder="<svg>...</svg>"></textarea>
-                        </label>
+            <section id="securityView" class="panel" hidden>
+                <div class="security-grid">
+                    <div class="dash-block">
+                        <h2>当前访问 IP</h2>
+                        <p class="ip-display" id="securityIp">—</p>
+                        <p class="muted">配置白名单时请加入上述 IP（支持 <code>1.2.3.4</code> 或 <code>1.2.3.0/24</code>）。</p>
                     </div>
+                    <div class="dash-block">
+                        <h2>IP 白名单状态</h2>
+                        <p id="securityAllowStatus" class="status-pill">检测中…</p>
+                        <p class="muted">在 Cloudflare Pages → Settings → Environment variables 设置 <code>ADMIN_ALLOWED_IPS</code>，多个用逗号分隔。留空表示不限制。</p>
+                    </div>
+                    <div class="dash-block">
+                        <h2>修改登录密码</h2>
+                        <p class="muted">线上密码只能通过 Cloudflare Secret 修改，本地 <code>.dev.vars</code> 仅影响本机开发。</p>
+                        <pre class="code-block">npx wrangler pages secret put ADMIN_PASSWORD --project-name=shelfhub</pre>
+                    </div>
+                </div>
+            </section>
 
-                    <div class="mirrors-block">
-                        <div class="mirrors-head">
-                            <h2>国内镜像</h2>
-                            <button type="button" class="btn-secondary" id="addMirrorBtn">添加镜像</button>
+            <section id="editorView" class="panel panel-editor" hidden>
+                <form id="appForm" class="app-form">
+                    <div class="editor-layout">
+                        <div class="editor-main">
+                            <div class="form-grid">
+                                <label class="field">
+                                    <span>应用 ID *</span>
+                                    <input name="id" id="fieldId" required pattern="[A-Za-z0-9][A-Za-z0-9_-]{1,62}" placeholder="vscode">
+                                </label>
+                                <label class="field">
+                                    <span>名称 *</span>
+                                    <input name="name" id="fieldName" required>
+                                </label>
+                                <label class="field">
+                                    <span>平台 *</span>
+                                    <select name="platform" id="fieldPlatform" required>
+                                        <option value="windows">Windows</option>
+                                        <option value="android">Android</option>
+                                    </select>
+                                </label>
+                                <label class="field">
+                                    <span>分类 *</span>
+                                    <select name="category" id="fieldCategory" required>
+                                        <option value="development">development · 开发工具</option>
+                                        <option value="office">office · 办公效率</option>
+                                        <option value="design">design · 设计创意</option>
+                                        <option value="entertainment">entertainment · 影音娱乐</option>
+                                        <option value="system">system · 系统工具</option>
+                                        <option value="network">network · 网络传输</option>
+                                        <option value="security">security · 安全隐私</option>
+                                    </select>
+                                </label>
+                                <label class="field">
+                                    <span>分类名称 *</span>
+                                    <input name="categoryName" id="fieldCategoryName" required placeholder="开发工具">
+                                </label>
+                                <label class="field">
+                                    <span>版本</span>
+                                    <input name="version" id="fieldVersion" placeholder="1.0.0">
+                                </label>
+                                <label class="field">
+                                    <span>大小</span>
+                                    <input name="size" id="fieldSize" placeholder="85MB">
+                                </label>
+                                <label class="field">
+                                    <span>更新日期</span>
+                                    <input name="updatedDate" id="fieldUpdatedDate" type="date">
+                                </label>
+                                <label class="field">
+                                    <span>GitHub Star</span>
+                                    <input name="githubStars" id="fieldGithubStars" type="number" min="0" value="0">
+                                </label>
+                                <label class="field field-span-2">
+                                    <span>GitHub 仓库</span>
+                                    <input name="githubUrl" id="fieldGithubUrl" placeholder="https://github.com/org/repo">
+                                </label>
+                                <label class="field field-span-2">
+                                    <span>简介 *</span>
+                                    <textarea name="description" id="fieldDescription" rows="3" required></textarea>
+                                </label>
+                                <label class="field field-span-2">
+                                    <span>特性（每行一条）</span>
+                                    <textarea name="features" id="fieldFeatures" rows="4" placeholder="智能代码补全&#10;Git集成"></textarea>
+                                </label>
+                            </div>
+
+                            <div class="mirrors-block">
+                                <div class="mirrors-head">
+                                    <h2>国内镜像</h2>
+                                    <button type="button" class="btn-secondary" id="addMirrorBtn">添加镜像</button>
+                                </div>
+                                <div id="mirrorsList"></div>
+                            </div>
                         </div>
-                        <div id="mirrorsList"></div>
+
+                        <aside class="editor-side">
+                            <h2>应用图标</h2>
+                            <div class="icon-drop" id="iconDrop" tabindex="0">
+                                <div class="icon-preview" id="iconPreview" aria-hidden="true"></div>
+                                <p class="icon-drop-title">拖拽或点击上传</p>
+                                <p class="muted">支持 PNG / JPG / WebP / GIF / SVG，自动压缩</p>
+                                <input type="file" id="iconFile" accept="image/png,image/jpeg,image/webp,image/gif,image/svg+xml,.png,.jpg,.jpeg,.webp,.gif,.svg" hidden>
+                            </div>
+                            <label class="field">
+                                <span>或粘贴 SVG / 图片 URL / Data URL</span>
+                                <textarea name="icon" id="fieldIcon" rows="4" placeholder="<svg>...</svg> 或 https://..."></textarea>
+                            </label>
+                            <button type="button" class="btn-ghost btn-block" id="clearIconBtn">清除图标</button>
+                        </aside>
                     </div>
 
                     <p class="form-error" id="formError" hidden></p>
-                    <div class="form-actions">
+                    <div class="form-actions sticky-actions">
                         <button type="button" class="btn-ghost" id="cancelEditBtn">取消</button>
-                        <button type="submit" class="btn-primary" id="saveAppBtn">保存</button>
+                        <button type="submit" class="btn-primary" id="saveAppBtn">保存应用</button>
                     </div>
                 </form>
             </section>
         </main>
     </div>
 
+    <div id="confirmModal" class="modal" hidden>
+        <div class="modal-card">
+            <h3 id="confirmTitle">确认</h3>
+            <p id="confirmMessage" class="muted"></p>
+            <div class="form-actions">
+                <button type="button" class="btn-ghost" id="confirmCancel">取消</button>
+                <button type="button" class="btn-danger" id="confirmOk">确认删除</button>
+            </div>
+        </div>
+    </div>
+
     <div id="toast" class="toast" hidden></div>
+    <div id="busy" class="busy" hidden><div class="busy-spinner"></div></div>
     <script src="admin.js"></script>
 </body>
 </html>

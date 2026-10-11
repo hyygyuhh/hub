@@ -23,6 +23,18 @@ import {
   getStats
 } from '../_lib/apps.js';
 
+import { clientIp, parseAllowlist, isIpAllowed } from '../_lib/ip.js';
+
+const MAX_ICON_BYTES = 400 * 1024;
+const ALLOWED_ICON_TYPES = new Set([
+  'image/png',
+  'image/jpeg',
+  'image/jpg',
+  'image/webp',
+  'image/gif',
+  'image/svg+xml'
+]);
+
 function corsHeaders(request) {
   const origin = request.headers.get('Origin') || '';
   const url = new URL(request.url);
@@ -110,6 +122,10 @@ export async function onRequest(context) {
 
     // Admin routes
     if (parts[0] === 'admin') {
+      if (!isIpAllowed(request, env)) {
+        return withCors(request, error('当前 IP 无权访问管理后台', 403));
+      }
+
       // POST /api/admin/login
       if (parts[1] === 'login' && parts.length === 2 && method === 'POST') {
         const body = await readJson(request);
@@ -118,7 +134,9 @@ export async function onRequest(context) {
           return withCors(request, error('服务器未配置 ADMIN_PASSWORD', 500));
         }
         const ok = await timingSafeEqual(password, env.ADMIN_PASSWORD);
-        if (!ok) return withCors(request, error('密码错误', 401));
+        if (!ok) {
+          return withCors(request, error('密码错误（线上密码以 Cloudflare Secret 为准，改 .dev.vars 不会生效）', 401));
+        }
         const { token } = await createSession(env);
         return withCors(request, json({ ok: true }, 200, {
           'Set-Cookie': sessionCookie(request, token, SESSION_DAYS * 86400)
@@ -141,7 +159,47 @@ export async function onRequest(context) {
 
       // GET /api/admin/me
       if (parts[1] === 'me' && parts.length === 2 && method === 'GET') {
-        return withCors(request, json({ ok: true, role: 'admin' }));
+        const allow = parseAllowlist(env.ADMIN_ALLOWED_IPS);
+        return withCors(request, json({
+          ok: true,
+          role: 'admin',
+          ip: clientIp(request),
+          ipAllowlistEnabled: allow.length > 0,
+          ipAllowlistCount: allow.length
+        }));
+      }
+
+      // POST /api/admin/upload-icon  { dataUrl or base64 + contentType }
+      if (parts[1] === 'upload-icon' && parts.length === 2 && method === 'POST') {
+        const body = await readJson(request);
+        if (!body) return withCors(request, error('无效 JSON'));
+
+        let dataUrl = String(body.dataUrl || '').trim();
+        if (!dataUrl && body.base64) {
+          const type = String(body.contentType || 'image/png').toLowerCase();
+          if (!ALLOWED_ICON_TYPES.has(type) && type !== 'image/jpg') {
+            return withCors(request, error('仅支持 PNG / JPG / WebP / GIF / SVG'));
+          }
+          const mime = type === 'image/jpg' ? 'image/jpeg' : type;
+          dataUrl = 'data:' + mime + ';base64,' + String(body.base64).replace(/\s+/g, '');
+        }
+
+        const match = /^data:(image\/[a-z0-9.+-]+);base64,([A-Za-z0-9+/=\s]+)$/i.exec(dataUrl);
+        if (!match) {
+          return withCors(request, error('请上传有效的图片（PNG / JPG / WebP / GIF / SVG）'));
+        }
+        const mime = match[1].toLowerCase();
+        if (!ALLOWED_ICON_TYPES.has(mime) && mime !== 'image/jpg') {
+          return withCors(request, error('不支持的图片类型'));
+        }
+        const b64 = match[2].replace(/\s+/g, '');
+        const bytes = Math.floor(b64.length * 0.75);
+        if (bytes > MAX_ICON_BYTES) {
+          return withCors(request, error('图标过大，请压缩到 400KB 以内'));
+        }
+
+        const normalized = 'data:' + (mime === 'image/jpg' ? 'image/jpeg' : mime) + ';base64,' + b64;
+        return withCors(request, json({ ok: true, icon: normalized, bytes }));
       }
 
       // GET /api/admin/stats
