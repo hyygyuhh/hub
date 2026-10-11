@@ -60,7 +60,6 @@ npm run db:remote
 3. 在项目设置中绑定 D1：变量名 `DB` → 选择 `shelfhub` 库  
 4. 设置 Secrets / 环境变量：  
    - `ADMIN_PASSWORD`（必填，管理员密码；改本地 `.dev.vars` **不会**同步线上）  
-   - `ADMIN_ALLOWED_IPS`（可选，管理后台 IP 白名单，逗号分隔；留空不限制）  
    - `ANALYTICS_DASHBOARD_URL`（可选，Web Analytics 控制台链接）  
 
 或用 CLI：
@@ -70,14 +69,34 @@ npx wrangler pages secret put ADMIN_PASSWORD --project-name=shelfhub
 npx wrangler pages deploy . --project-name=shelfhub
 ```
 
-### 4. 开启 Web Analytics
+### 4. 用 Cloudflare Access 保护后台（推荐）
+
+不依赖公网 IP。未通过 Access 验证时，无法打开 `/admin` 与 `/api/admin`。
+
+1. 打开 [Zero Trust 控制台](https://one.dash.cloudflare.com/)（首次会引导创建团队名，免费即可）  
+2. **Access** → **Applications** → **Add an application** → 选 **Self-hosted**  
+3. 应用名称：`ShelfHub Admin`  
+4. **Public hostname**（可添加多条）：  
+   - `shelfhub.pages.dev`，Path 填 `admin*`  
+   - 再加一条：`shelfhub.pages.dev`，Path 填 `api/admin*`  
+   - 若有自定义域名，同样加 `你的域名` + 上述两个 Path  
+5. **Add a policy**  
+   - Policy name：`Allow me`  
+   - Action：**Allow**  
+   - Include → **Emails** → 填你的邮箱（或 Emails ending in `@你的域名`）  
+6. 身份验证：默认可用 **One-time PIN**（邮箱验证码），保存即可  
+7. 用无痕窗口打开 `https://shelfhub.pages.dev/admin/`：应先出现 Cloudflare 登录页，通过后再进入架集密码登录  
+
+前台 `/` 与公开 `/api/apps` **不要**加进 Access，否则访客打不开网站。
+
+### 5. 开启 Web Analytics
 
 Cloudflare → Analytics & Logs → Web Analytics → 添加站点。  
 把仪表盘 URL 填到 `ANALYTICS_DASHBOARD_URL`，后台「访问分析」即可跳转。
 
-### 5. 使用管理后台
+### 6. 使用管理后台
 
-打开 `https://你的域名/admin/` → 密码登录 → **新增应用**。  
+打开 `https://你的域名/admin/` →（先过 Access）→ 密码登录 → **新增应用**。  
 前台会通过 `GET /api/apps` 读取 D1 数据；详情浏览与镜像点击会写入事件，用于仪表盘热门榜。
 
 ## API 一览

@@ -9,9 +9,10 @@ database_id = "bbf7294e-ae4e-4e75-ba30-e931b00b6b17"
 preview_database_id = "DB"
 
 # Secrets / vars (Pages → Settings → Environment variables):
-#   ADMIN_PASSWORD          (Secret, 必填) 管理员密码 —— 改本地 .dev.vars 不会同步线上
-#   ADMIN_ALLOWED_IPS       (可选) 管理后台 IP 白名单，逗号分隔，如 1.2.3.4,5.6.7.0/24
-#                           留空则不限制 IP
-#   ANALYTICS_DASHBOARD_URL  (可选) Cloudflare Web Analytics 链接
+#   ADMIN_PASSWORD           (Secret, 必填) 管理员密码 —— 改本地 .dev.vars 不会同步线上
+#   ANALYTICS_DASHBOARD_URL   (可选) Cloudflare Web Analytics 链接
+#
+# 后台入口请用 Cloudflare Access 保护 /admin* 与 /api/admin*（见 README），
+# 不要依赖公网 IP 白名单（家庭宽带 IP 会变）。
 #
 #   npx wrangler pages secret put ADMIN_PASSWORD --project-name=shelfhub

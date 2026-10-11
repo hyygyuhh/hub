@@ -125,9 +125,9 @@
                         <p class="muted">写入白名单时用这个地址（支持 <code>1.2.3.4</code> 或 CIDR <code>1.2.3.0/24</code>）。</p>
                     </article>
                     <article class="security-block">
-                        <h2>IP 白名单</h2>
+                        <h2>访问控制</h2>
                         <p id="securityAllowStatus" class="status-line">检测中…</p>
-                        <p class="muted">Cloudflare Pages → Environment variables → <code>ADMIN_ALLOWED_IPS</code>。留空表示不限制。</p>
+                        <p class="muted">推荐用 <strong>Cloudflare Access</strong> 保护 <code>/admin*</code> 与 <code>/api/admin*</code>（邮箱验证码，不绑公网 IP）。配置见仓库 README「Cloudflare Access」一节。</p>
                     </article>
                     <article class="security-block">
                         <h2>修改登录密码</h2>
