@@ -431,13 +431,17 @@ code {
     font-size: 0.72rem;
 }
 
-.app-thumb img, .app-thumb svg {
+.app-thumb img {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    display: block;
 }
 
-.app-thumb svg { padding: 0.35rem; }
+.app-thumb svg {
+    width: 1.35rem;
+    height: 1.35rem;
+}
 
 .row-actions {
     display: flex;
