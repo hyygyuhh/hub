@@ -8,102 +8,121 @@
     <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&family=Noto+Serif+SC:wght@600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&family=Noto+Serif+SC:wght@600;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="admin.css">
 </head>
 <body>
-    <div id="loginView" class="login-view">
-        <form id="loginForm" class="login-card" autocomplete="on">
-            <div class="login-mark" aria-hidden="true"></div>
-            <p class="login-brand">架集 ShelfHub</p>
-            <h1>管理后台</h1>
-            <p class="login-hint">密码为 Cloudflare 上的 <code>ADMIN_PASSWORD</code>，不是本地 <code>.dev.vars</code></p>
-            <label class="field">
-                <span>密码</span>
-                <div class="password-row">
-                    <input type="password" id="loginPassword" name="password" required autocomplete="current-password" placeholder="输入管理员密码">
-                    <button type="button" class="btn-ghost btn-icon" id="togglePassword" aria-label="显示密码">显示</button>
-                </div>
-            </label>
-            <p class="form-error" id="loginError" hidden></p>
-            <button type="submit" class="btn-primary btn-block" id="loginBtn">登录</button>
-        </form>
+    <!-- Login: brand-first full composition -->
+    <div id="loginView" class="login-screen">
+        <div class="login-atmosphere" aria-hidden="true"></div>
+        <div class="login-stage">
+            <header class="login-brand-block">
+                <p class="login-kicker">ShelfHub Console</p>
+                <h1 class="login-logo">架集</h1>
+                <p class="login-tagline">软件货架的后台台账</p>
+            </header>
+            <form id="loginForm" class="login-form" autocomplete="on">
+                <label class="field">
+                    <span>管理员密码</span>
+                    <div class="password-row">
+                        <input type="password" id="loginPassword" name="password" required autocomplete="current-password" placeholder="Cloudflare ADMIN_PASSWORD">
+                        <button type="button" class="text-btn" id="togglePassword">显示</button>
+                    </div>
+                </label>
+                <p class="field-note">改本地 <code>.dev.vars</code> 不会更新线上密码</p>
+                <p class="form-error" id="loginError" hidden></p>
+                <button type="submit" class="btn-primary btn-wide" id="loginBtn">进入后台</button>
+            </form>
+        </div>
     </div>
 
-    <div id="appView" class="app-view" hidden>
-        <aside class="sidebar">
-            <div class="sidebar-brand">
-                <strong>架集</strong>
-                <span>管理后台</span>
-            </div>
-            <nav class="sidebar-nav">
-                <button type="button" class="nav-btn is-active" data-view="dashboard">仪表盘</button>
-                <button type="button" class="nav-btn" data-view="apps">应用管理</button>
-                <button type="button" class="nav-btn" data-view="security">安全设置</button>
-                <a class="nav-link" href="../" target="_blank" rel="noopener">打开前台 ↗</a>
-            </nav>
-            <div class="sidebar-meta">
-                <span class="muted" id="sidebarIp">IP —</span>
-                <button type="button" class="btn-ghost" id="logoutBtn">退出登录</button>
-            </div>
-        </aside>
-
-        <main class="main">
-            <header class="topbar">
-                <div>
-                    <h1 id="viewTitle">仪表盘</h1>
-                    <p class="topbar-sub" id="viewSubtitle">站点概况与热门数据</p>
+    <!-- App shell -->
+    <div id="appView" class="console" hidden>
+        <header class="masthead">
+            <div class="masthead-inner">
+                <a class="mast-brand" href="#dashboard" data-view="dashboard">
+                    <span class="mast-cn">架集</span>
+                    <span class="mast-en">Admin</span>
+                </a>
+                <nav class="mast-nav" aria-label="后台导航">
+                    <button type="button" class="nav-btn is-active" data-view="dashboard">概览</button>
+                    <button type="button" class="nav-btn" data-view="apps">应用</button>
+                    <button type="button" class="nav-btn" data-view="security">安全</button>
+                </nav>
+                <div class="mast-tools">
+                    <span class="mast-ip" id="sidebarIp">IP —</span>
+                    <a class="text-btn" href="../" target="_blank" rel="noopener">前台</a>
+                    <button type="button" class="text-btn" id="logoutBtn">退出</button>
                 </div>
-                <div class="topbar-actions">
-                    <button type="button" class="btn-secondary" id="refreshBtn" title="刷新数据">刷新</button>
-                    <button type="button" class="btn-primary" id="newAppBtn" hidden>+ 新增应用</button>
-                </div>
-            </header>
+            </div>
+        </header>
 
-            <section id="dashboardView" class="panel">
-                <div class="stat-grid" id="statGrid"></div>
-                <div class="dash-columns">
-                    <div class="dash-block">
-                        <h2>分类分布</h2>
+        <div class="console-body">
+            <div class="page-head">
+                <div class="page-head-copy">
+                    <h1 id="viewTitle">概览</h1>
+                    <p id="viewSubtitle">站点台账与近七日动向</p>
+                </div>
+                <div class="page-head-actions">
+                    <button type="button" class="btn-ghost" id="refreshBtn">刷新</button>
+                    <button type="button" class="btn-primary" id="newAppBtn" hidden>新增应用</button>
+                </div>
+            </div>
+
+            <!-- Dashboard -->
+            <section id="dashboardView" class="page">
+                <div class="stat-rail" id="statGrid"></div>
+
+                <div class="ledger-grid">
+                    <section class="ledger">
+                        <header class="ledger-head">
+                            <h2>分类分布</h2>
+                        </header>
                         <ul id="categoryList" class="plain-list"></ul>
-                    </div>
-                    <div class="dash-block">
-                        <h2>近 7 日热门浏览</h2>
+                    </section>
+                    <section class="ledger">
+                        <header class="ledger-head">
+                            <h2>热门浏览 · 7 日</h2>
+                        </header>
                         <ul id="topViewsList" class="plain-list"></ul>
-                    </div>
-                    <div class="dash-block">
-                        <h2>近 7 日热门下载</h2>
+                    </section>
+                    <section class="ledger">
+                        <header class="ledger-head">
+                            <h2>热门下载 · 7 日</h2>
+                        </header>
                         <ul id="topDownloadsList" class="plain-list"></ul>
-                    </div>
+                    </section>
                 </div>
-                <div class="dash-columns">
-                    <div class="dash-block">
-                        <h2>缺镜像</h2>
+
+                <div class="ledger-grid ledger-grid-wide">
+                    <section class="ledger">
+                        <header class="ledger-head"><h2>缺镜像</h2></header>
                         <ul id="missingMirrorsList" class="plain-list"></ul>
-                    </div>
-                    <div class="dash-block">
-                        <h2>缺 GitHub 链接</h2>
+                    </section>
+                    <section class="ledger">
+                        <header class="ledger-head"><h2>缺 GitHub</h2></header>
                         <ul id="missingGithubList" class="plain-list"></ul>
-                    </div>
-                    <div class="dash-block">
-                        <h2>访问分析</h2>
+                    </section>
+                    <section class="ledger">
+                        <header class="ledger-head"><h2>访问分析</h2></header>
                         <p class="muted" id="analyticsNote">全站 PV/UV 请在 Cloudflare Web Analytics 查看。</p>
-                        <a id="analyticsLink" class="btn-secondary" href="#" target="_blank" rel="noopener" hidden>打开 Analytics</a>
-                    </div>
+                        <a id="analyticsLink" class="btn-ghost" href="#" target="_blank" rel="noopener" hidden>打开 Analytics</a>
+                    </section>
                 </div>
             </section>
 
-            <section id="appsView" class="panel" hidden>
-                <div class="toolbar">
-                    <input type="search" id="appSearch" placeholder="搜索名称 / ID / 分类…" class="search-input">
+            <!-- Apps -->
+            <section id="appsView" class="page" hidden>
+                <div class="filter-bar">
+                    <input type="search" id="appSearch" class="search-input" placeholder="搜索名称、ID、分类…">
                     <select id="platformFilter">
                         <option value="all">全部平台</option>
                         <option value="windows">Windows</option>
                         <option value="android">Android</option>
                     </select>
-                    <span class="muted" id="appsCount"></span>
+                    <span class="filter-count" id="appsCount"></span>
                 </div>
-                <div class="table-wrap">
+                <div class="table-sheet">
                     <table class="apps-table">
                         <thead>
                             <tr>
@@ -118,135 +137,140 @@
                         <tbody id="appsTableBody"></tbody>
                     </table>
                 </div>
-                <p class="empty-hint" id="appsEmpty" hidden>暂无应用，点击右上角「新增应用」开始录入。</p>
+                <p class="empty-hint" id="appsEmpty" hidden>货架还是空的。点右上角「新增应用」开始上架。</p>
             </section>
 
-            <section id="securityView" class="panel" hidden>
-                <div class="security-grid">
-                    <div class="dash-block">
+            <!-- Security -->
+            <section id="securityView" class="page" hidden>
+                <div class="security-stack">
+                    <article class="security-block">
                         <h2>当前访问 IP</h2>
                         <p class="ip-display" id="securityIp">—</p>
-                        <p class="muted">配置白名单时请加入上述 IP（支持 <code>1.2.3.4</code> 或 <code>1.2.3.0/24</code>）。</p>
-                    </div>
-                    <div class="dash-block">
-                        <h2>IP 白名单状态</h2>
-                        <p id="securityAllowStatus" class="status-pill">检测中…</p>
-                        <p class="muted">在 Cloudflare Pages → Settings → Environment variables 设置 <code>ADMIN_ALLOWED_IPS</code>，多个用逗号分隔。留空表示不限制。</p>
-                    </div>
-                    <div class="dash-block">
+                        <p class="muted">写入白名单时用这个地址（支持 <code>1.2.3.4</code> 或 CIDR <code>1.2.3.0/24</code>）。</p>
+                    </article>
+                    <article class="security-block">
+                        <h2>IP 白名单</h2>
+                        <p id="securityAllowStatus" class="status-line">检测中…</p>
+                        <p class="muted">Cloudflare Pages → Environment variables → <code>ADMIN_ALLOWED_IPS</code>。留空表示不限制。</p>
+                    </article>
+                    <article class="security-block">
                         <h2>修改登录密码</h2>
-                        <p class="muted">线上密码只能通过 Cloudflare Secret 修改，本地 <code>.dev.vars</code> 仅影响本机开发。</p>
+                        <p class="muted">线上密码只认 Cloudflare Secret，与本地 <code>.dev.vars</code> 无关。</p>
                         <pre class="code-block">npx wrangler pages secret put ADMIN_PASSWORD --project-name=shelfhub</pre>
-                    </div>
+                    </article>
                 </div>
             </section>
 
-            <section id="editorView" class="panel panel-editor" hidden>
-                <form id="appForm" class="app-form">
-                    <div class="editor-layout">
+            <!-- Editor -->
+            <section id="editorView" class="page page-editor" hidden>
+                <form id="appForm" class="editor-form">
+                    <div class="editor-columns">
                         <div class="editor-main">
-                            <div class="form-grid">
-                                <label class="field">
-                                    <span>应用 ID *</span>
-                                    <input name="id" id="fieldId" required pattern="[A-Za-z0-9][A-Za-z0-9_-]{1,62}" placeholder="vscode">
-                                </label>
-                                <label class="field">
-                                    <span>名称 *</span>
-                                    <input name="name" id="fieldName" required>
-                                </label>
-                                <label class="field">
-                                    <span>平台 *</span>
-                                    <select name="platform" id="fieldPlatform" required>
-                                        <option value="windows">Windows</option>
-                                        <option value="android">Android</option>
-                                    </select>
-                                </label>
-                                <label class="field">
-                                    <span>分类 *</span>
-                                    <select name="category" id="fieldCategory" required>
-                                        <option value="development">development · 开发工具</option>
-                                        <option value="office">office · 办公效率</option>
-                                        <option value="design">design · 设计创意</option>
-                                        <option value="entertainment">entertainment · 影音娱乐</option>
-                                        <option value="system">system · 系统工具</option>
-                                        <option value="network">network · 网络传输</option>
-                                        <option value="security">security · 安全隐私</option>
-                                    </select>
-                                </label>
-                                <label class="field">
-                                    <span>分类名称 *</span>
-                                    <input name="categoryName" id="fieldCategoryName" required placeholder="开发工具">
-                                </label>
-                                <label class="field">
-                                    <span>版本</span>
-                                    <input name="version" id="fieldVersion" placeholder="1.0.0">
-                                </label>
-                                <label class="field">
-                                    <span>大小</span>
-                                    <input name="size" id="fieldSize" placeholder="85MB">
-                                </label>
-                                <label class="field">
-                                    <span>更新日期</span>
-                                    <input name="updatedDate" id="fieldUpdatedDate" type="date">
-                                </label>
-                                <label class="field">
-                                    <span>GitHub Star</span>
-                                    <input name="githubStars" id="fieldGithubStars" type="number" min="0" value="0">
-                                </label>
-                                <label class="field field-span-2">
-                                    <span>GitHub 仓库</span>
-                                    <input name="githubUrl" id="fieldGithubUrl" placeholder="https://github.com/org/repo">
-                                </label>
-                                <label class="field field-span-2">
-                                    <span>简介 *</span>
-                                    <textarea name="description" id="fieldDescription" rows="3" required></textarea>
-                                </label>
-                                <label class="field field-span-2">
-                                    <span>特性（每行一条）</span>
-                                    <textarea name="features" id="fieldFeatures" rows="4" placeholder="智能代码补全&#10;Git集成"></textarea>
-                                </label>
+                            <div class="form-section">
+                                <h2 class="form-section-title">基本信息</h2>
+                                <div class="form-grid">
+                                    <label class="field">
+                                        <span>应用 ID *</span>
+                                        <input name="id" id="fieldId" required pattern="[A-Za-z0-9][A-Za-z0-9_-]{1,62}" placeholder="vscode">
+                                    </label>
+                                    <label class="field">
+                                        <span>名称 *</span>
+                                        <input name="name" id="fieldName" required>
+                                    </label>
+                                    <label class="field">
+                                        <span>平台 *</span>
+                                        <select name="platform" id="fieldPlatform" required>
+                                            <option value="windows">Windows</option>
+                                            <option value="android">Android</option>
+                                        </select>
+                                    </label>
+                                    <label class="field">
+                                        <span>分类 *</span>
+                                        <select name="category" id="fieldCategory" required>
+                                            <option value="development">development · 开发工具</option>
+                                            <option value="office">office · 办公效率</option>
+                                            <option value="design">design · 设计创意</option>
+                                            <option value="entertainment">entertainment · 影音娱乐</option>
+                                            <option value="system">system · 系统工具</option>
+                                            <option value="network">network · 网络传输</option>
+                                            <option value="security">security · 安全隐私</option>
+                                        </select>
+                                    </label>
+                                    <label class="field">
+                                        <span>分类名称 *</span>
+                                        <input name="categoryName" id="fieldCategoryName" required placeholder="开发工具">
+                                    </label>
+                                    <label class="field">
+                                        <span>版本</span>
+                                        <input name="version" id="fieldVersion" placeholder="1.0.0">
+                                    </label>
+                                    <label class="field">
+                                        <span>大小</span>
+                                        <input name="size" id="fieldSize" placeholder="85MB">
+                                    </label>
+                                    <label class="field">
+                                        <span>更新日期</span>
+                                        <input name="updatedDate" id="fieldUpdatedDate" type="date">
+                                    </label>
+                                    <label class="field">
+                                        <span>GitHub Star</span>
+                                        <input name="githubStars" id="fieldGithubStars" type="number" min="0" value="0">
+                                    </label>
+                                    <label class="field field-span-2">
+                                        <span>GitHub 仓库</span>
+                                        <input name="githubUrl" id="fieldGithubUrl" placeholder="https://github.com/org/repo">
+                                    </label>
+                                    <label class="field field-span-2">
+                                        <span>简介 *</span>
+                                        <textarea name="description" id="fieldDescription" rows="3" required></textarea>
+                                    </label>
+                                    <label class="field field-span-2">
+                                        <span>特性（每行一条）</span>
+                                        <textarea name="features" id="fieldFeatures" rows="4" placeholder="智能代码补全&#10;Git集成"></textarea>
+                                    </label>
+                                </div>
                             </div>
 
-                            <div class="mirrors-block">
-                                <div class="mirrors-head">
-                                    <h2>国内镜像</h2>
-                                    <button type="button" class="btn-secondary" id="addMirrorBtn">添加镜像</button>
+                            <div class="form-section">
+                                <div class="form-section-bar">
+                                    <h2 class="form-section-title">国内镜像</h2>
+                                    <button type="button" class="btn-ghost" id="addMirrorBtn">添加一行</button>
                                 </div>
-                                <div id="mirrorsList"></div>
+                                <div id="mirrorsList" class="mirrors-list"></div>
                             </div>
                         </div>
 
-                        <aside class="editor-side">
-                            <h2>应用图标</h2>
+                        <aside class="editor-rail">
+                            <h2 class="form-section-title">图标</h2>
                             <div class="icon-drop" id="iconDrop" tabindex="0">
                                 <div class="icon-preview" id="iconPreview" aria-hidden="true"></div>
-                                <p class="icon-drop-title">拖拽或点击上传</p>
-                                <p class="muted">支持 PNG / JPG / WebP / GIF / SVG，自动压缩</p>
+                                <p class="icon-drop-title">拖入或点击上传</p>
+                                <p class="muted">PNG / JPG / WebP / GIF / SVG</p>
                                 <input type="file" id="iconFile" accept="image/png,image/jpeg,image/webp,image/gif,image/svg+xml,.png,.jpg,.jpeg,.webp,.gif,.svg" hidden>
                             </div>
                             <label class="field">
-                                <span>或粘贴 SVG / 图片 URL / Data URL</span>
-                                <textarea name="icon" id="fieldIcon" rows="4" placeholder="<svg>...</svg> 或 https://..."></textarea>
+                                <span>SVG · URL · Data URL</span>
+                                <textarea name="icon" id="fieldIcon" rows="5" placeholder="<svg>…</svg>"></textarea>
                             </label>
-                            <button type="button" class="btn-ghost btn-block" id="clearIconBtn">清除图标</button>
+                            <button type="button" class="text-btn" id="clearIconBtn">清除图标</button>
                         </aside>
                     </div>
 
                     <p class="form-error" id="formError" hidden></p>
-                    <div class="form-actions sticky-actions">
-                        <button type="button" class="btn-ghost" id="cancelEditBtn">取消</button>
-                        <button type="submit" class="btn-primary" id="saveAppBtn">保存应用</button>
-                    </div>
+                    <footer class="editor-footer">
+                        <button type="button" class="btn-ghost" id="cancelEditBtn">返回列表</button>
+                        <button type="submit" class="btn-primary" id="saveAppBtn">保存到货架</button>
+                    </footer>
                 </form>
             </section>
-        </main>
+        </div>
     </div>
 
     <div id="confirmModal" class="modal" hidden>
-        <div class="modal-card">
+        <div class="modal-sheet" role="dialog" aria-modal="true" aria-labelledby="confirmTitle">
             <h3 id="confirmTitle">确认</h3>
             <p id="confirmMessage" class="muted"></p>
-            <div class="form-actions">
+            <div class="modal-actions">
                 <button type="button" class="btn-ghost" id="confirmCancel">取消</button>
                 <button type="button" class="btn-danger" id="confirmOk">确认删除</button>
             </div>
@@ -254,7 +278,7 @@
     </div>
 
     <div id="toast" class="toast" hidden></div>
-    <div id="busy" class="busy" hidden><div class="busy-spinner"></div></div>
+    <div id="busy" class="busy" hidden><div class="busy-bar"></div></div>
     <script src="admin.js"></script>
 </body>
 </html>

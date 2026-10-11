@@ -280,10 +280,10 @@
     $('#newAppBtn').hidden = view !== 'apps';
 
     const titles = {
-      dashboard: ['仪表盘', '站点概况与热门数据'],
-      apps: ['应用管理', '搜索、编辑与维护软件条目'],
-      editor: [state.editingId ? '编辑应用' : '新增应用', '填写资料、上传图标与镜像链接'],
-      security: ['安全设置', 'IP 白名单与密码说明']
+      dashboard: ['概览', '站点台账与近七日动向'],
+      apps: ['应用', '检索、编辑与上架软件'],
+      editor: [state.editingId ? '编辑应用' : '新增应用', '资料、图标与镜像'],
+      security: ['安全', 'IP 白名单与密码']
     };
     const t = titles[view] || titles.dashboard;
     $('#viewTitle').textContent = t[0];
@@ -537,6 +537,14 @@
     $$('.nav-btn').forEach(btn => {
       btn.addEventListener('click', () => setView(btn.dataset.view));
     });
+
+    const mastBrand = document.querySelector('.mast-brand');
+    if (mastBrand) {
+      mastBrand.addEventListener('click', (e) => {
+        e.preventDefault();
+        setView('dashboard');
+      });
+    }
 
     $('#newAppBtn').addEventListener('click', () => openEditor(null));
     $('#cancelEditBtn').addEventListener('click', () => setView('apps'));
