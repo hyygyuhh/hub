@@ -198,7 +198,7 @@
     function siteOrigin() {
         return location.origin && location.origin !== 'null'
             ? location.origin
-            : 'https://shelfhub.pages.dev';
+            : 'https://scumguide.site';
     }
 
     function truncateMeta(str, max) {
