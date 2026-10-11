@@ -5,7 +5,7 @@ pages_build_output_dir = "."
 [[d1_databases]]
 binding = "DB"
 database_name = "shelfhub"
-database_id = "00000000-0000-0000-0000-000000000000"
+database_id = "bbf7294e-ae4e-4e75-ba30-e931b00b6b17"
 preview_database_id = "DB"
 
 # Set secrets via CLI (do not commit real values):
