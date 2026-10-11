@@ -78,13 +78,35 @@
     }
 
     const ALLOWED_MIRROR_TYPES = ['quark', 'baidu'];
-    const MIRROR_ORDER = { quark: 0, baidu: 1 };
+    const MIRROR_PREF_KEY = 'shelfhub-mirror-pref';
+
+    function getMirrorPref() {
+        try {
+            const v = localStorage.getItem(MIRROR_PREF_KEY);
+            if (v === 'baidu' || v === 'quark') return v;
+        } catch (_) { /* ignore */ }
+        return 'quark';
+    }
+
+    function setMirrorPref(type) {
+        const next = type === 'baidu' ? 'baidu' : 'quark';
+        try { localStorage.setItem(MIRROR_PREF_KEY, next); } catch (_) { /* ignore */ }
+        const select = $('#mirrorPrefSelect');
+        if (select) select.value = next;
+        return next;
+    }
+
+    function mirrorSortOrder() {
+        const pref = getMirrorPref();
+        return pref === 'baidu' ? { baidu: 0, quark: 1 } : { quark: 0, baidu: 1 };
+    }
 
     function filterDownloadSources(sources) {
         if (!Array.isArray(sources)) return [];
+        const order = mirrorSortOrder();
         return sources
             .filter(s => s && ALLOWED_MIRROR_TYPES.indexOf(s.type) !== -1)
-            .sort((a, b) => (MIRROR_ORDER[a.type] ?? 9) - (MIRROR_ORDER[b.type] ?? 9));
+            .sort((a, b) => (order[a.type] ?? 9) - (order[b.type] ?? 9));
     }
 
     function normalizeApp(app) {
@@ -614,10 +636,174 @@
         renderHotList();
         renderFavoritesList();
         renderRecentList();
+        renderCatalogBrowse();
         if (!detailAppId) {
             updatePageMeta(buildHomeMetaFromApps());
             updateJsonLd();
         }
+    }
+
+    function daysSince(dateStr) {
+        if (!dateStr) return Infinity;
+        const t = new Date(dateStr).getTime();
+        if (isNaN(t)) return Infinity;
+        return (Date.now() - t) / 864e5;
+    }
+
+    function sortByUpdated(apps) {
+        return [...apps].sort((a, b) => {
+            const ta = new Date(a.updatedDate || a.updatedAt || 0).getTime() || 0;
+            const tb = new Date(b.updatedDate || b.updatedAt || 0).getTime() || 0;
+            if (tb !== ta) return tb - ta;
+            return getGithubStars(b) - getGithubStars(a);
+        });
+    }
+
+    function setHomeBrowseVisible(on) {
+        ['catalogStats', 'discoverSection', 'hotShowcase', 'recentShowcase'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.hidden = !on;
+        });
+    }
+
+    function renderCatalogBrowse() {
+        if (!appsData.length) {
+            setHomeBrowseVisible(false);
+            return;
+        }
+        const show = isHomeView() && !detailAppId && !aboutViewActive;
+        setHomeBrowseVisible(show);
+        if (!show) return;
+
+        renderCatalogStats();
+        renderDiscoverGrids();
+        renderHotShowcase();
+        renderRecentShowcase();
+    }
+
+    function renderCatalogStats() {
+        const el = $('#catalogStats');
+        if (!el) return;
+        const mirrored = appsData.filter(a => (a.downloadSources || []).length > 0).length;
+        const recent = appsData.filter(a => daysSince(a.updatedDate || a.createdAt) <= 30).length;
+        const win = appsData.filter(a => a.platform === 'windows').length;
+        const android = appsData.filter(a => a.platform === 'android').length;
+        const items = [
+            [appsData.length, '收录软件'],
+            [win, 'Windows'],
+            [android, 'Android'],
+            [mirrored, '已配镜像'],
+            [recent, '近 30 日更新']
+        ];
+        el.innerHTML = items.map(([n, label]) =>
+            '<div class="catalog-stat"><strong>' + escapeHtml(n) + '</strong><span>' + escapeHtml(label) + '</span></div>'
+        ).join('');
+    }
+
+    function renderDiscoverGrids() {
+        const platEl = $('#platformDiscover');
+        const catEl = $('#categoryDiscover');
+        if (platEl) {
+            const plats = [
+                { key: 'all', label: '全部', count: appsData.length, platform: 'all' },
+                { key: 'windows', label: 'Windows', count: appsData.filter(a => a.platform === 'windows').length, platform: 'windows' },
+                { key: 'android', label: 'Android', count: appsData.filter(a => a.platform === 'android').length, platform: 'android' }
+            ];
+            platEl.innerHTML = plats.map(p => {
+                const active = (p.platform === 'all' && state.platform === 'all') || state.platform === p.platform;
+                return '<button type="button" class="discover-tile' + (active ? ' is-active' : '') +
+                    '" data-discover-platform="' + escapeAttr(p.platform) + '">' +
+                    '<span class="discover-tile-label">' + escapeHtml(p.label) + '</span>' +
+                    '<span class="discover-tile-count">' + escapeHtml(p.count) + '</span></button>';
+            }).join('');
+            platEl.querySelectorAll('[data-discover-platform]').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    selectStoreNav({
+                        platform: btn.dataset.discoverPlatform === 'all' ? 'all' : btn.dataset.discoverPlatform,
+                        category: 'all'
+                    });
+                    scrollToFeed();
+                });
+            });
+        }
+        if (catEl) {
+            const cats = Object.keys(CHIP_LABELS).filter(k => k !== 'all').map(slug => ({
+                slug,
+                label: CHIP_LABELS[slug],
+                count: appsData.filter(a => a.category === slug).length
+            })).filter(c => c.count > 0)
+              .sort((a, b) => b.count - a.count || a.label.localeCompare(b.label, 'zh'));
+
+            catEl.innerHTML = cats.map(c =>
+                '<button type="button" class="discover-tile' + (state.category === c.slug ? ' is-active' : '') +
+                '" data-discover-category="' + escapeAttr(c.slug) + '">' +
+                '<span class="discover-tile-label">' + escapeHtml(c.label) + '</span>' +
+                '<span class="discover-tile-count">' + escapeHtml(c.count) + '</span></button>'
+            ).join('');
+            catEl.querySelectorAll('[data-discover-category]').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    selectStoreNav({ category: btn.dataset.discoverCategory, platform: 'all' });
+                    scrollToFeed();
+                });
+            });
+        }
+    }
+
+    function scrollToFeed() {
+        const feed = document.querySelector('.content-layout') || $('#essentialList');
+        if (feed) feed.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    function renderHotShowcase() {
+        const grid = $('#hotShowcaseGrid');
+        if (!grid) return;
+        const hot = sortByGithubStars(appsData).filter(a => getGithubStars(a) > 0).slice(0, 9);
+        if (!hot.length) {
+            grid.innerHTML = '<p class="muted">暂无热门数据</p>';
+            return;
+        }
+        grid.innerHTML = hot.map(app => {
+            const stars = getGithubStars(app);
+            const mirrors = (app.downloadSources || []).length;
+            return '<button type="button" class="showcase-card" data-id="' + escapeAttr(app.id) + '">' +
+                '<span class="showcase-card-icon">' + (iconHtml(app) || placeholderIconSvg()) + '</span>' +
+                '<span>' +
+                '<span class="showcase-card-name">' + escapeHtml(app.name) + '</span>' +
+                '<span class="showcase-card-meta">' +
+                (app.platform === 'windows' ? 'Windows' : 'Android') +
+                (app.categoryName ? ' · ' + escapeHtml(app.categoryName) : '') +
+                (stars ? ' · ★ ' + formatGithubStars(stars) : '') +
+                (app.version ? ' · v' + escapeHtml(app.version) : '') +
+                (mirrors ? ' · ' + mirrors + ' 镜像' : ' · 待补镜像') +
+                '</span>' +
+                '<span class="showcase-card-desc">' + escapeHtml(app.description || '') + '</span>' +
+                '</span></button>';
+        }).join('');
+        grid.querySelectorAll('[data-id]').forEach(btn => {
+            btn.addEventListener('click', () => showAppDetail(btn.dataset.id));
+        });
+    }
+
+    function renderRecentShowcase() {
+        const list = $('#recentShowcaseList');
+        if (!list) return;
+        const recent = sortByUpdated(appsData).filter(a => a.updatedDate || a.updatedAt).slice(0, 8);
+        if (!recent.length) {
+            list.innerHTML = '<p class="muted">暂无更新日期</p>';
+            return;
+        }
+        list.innerHTML = recent.map(app =>
+            '<button type="button" class="showcase-row" data-id="' + escapeAttr(app.id) + '">' +
+            '<span><span class="showcase-row-name">' + escapeHtml(app.name) + '</span>' +
+            '<span class="showcase-row-desc">' + escapeHtml(app.description || '') + '</span></span>' +
+            '<span class="showcase-row-meta">' +
+            (app.version ? 'v' + escapeHtml(app.version) + ' · ' : '') +
+            formatAppDate(app.updatedDate || app.updatedAt) +
+            '</span></button>'
+        ).join('');
+        list.querySelectorAll('[data-id]').forEach(btn => {
+            btn.addEventListener('click', () => showAppDetail(btn.dataset.id));
+        });
     }
 
     function updateCategoryFilters() {
@@ -1019,10 +1205,13 @@
         const tagline = $('#storeTagline');
         if (tagline) tagline.hidden = true;
 
+        const home = isHomeView();
         const faq = document.querySelector('.faq-strip');
-        if (faq) faq.hidden = !isHomeView();
+        if (faq) faq.hidden = !home;
 
-        if (isHomeView() && apps.length) {
+        renderCatalogBrowse();
+
+        if (home && apps.length) {
             renderFeaturedHero(apps);
         } else {
             const card = $('#featuredCard');
@@ -2070,9 +2259,13 @@
         if (modalIcon) modalIcon.innerHTML = iconHtml(app) || placeholderIconSvg();
 
         const list = $('#downloadSourcesList');
-        const sources = app.downloadSources || [];
+        const sources = filterDownloadSources(app.downloadSources || []);
         if (!sources.length) {
-            list.innerHTML = '<p class="modal-empty">暂无国内镜像，请先前往 GitHub 仓库下载，或稍后再试。</p>';
+            const gh = app.githubUrl
+                ? '<p class="modal-empty">暂无国内镜像。<a href="' + escapeAttr(app.githubUrl) +
+                  '" target="_blank" rel="noopener noreferrer">前往 GitHub 仓库下载</a></p>'
+                : '<p class="modal-empty">暂无国内镜像，请稍后再试。</p>';
+            list.innerHTML = gh;
         } else {
             list.innerHTML = renderDownloadSources(sources);
             bindDownloadSourceEvents(list, { closeModal: true, appId: appId });
@@ -2142,13 +2335,11 @@
         options = options || {};
         hideAboutPage();
         showStoreHome();
-        if (options.category != null) {
-            state.category = options.category;
-            state.platform = 'all';
-        } else if (options.platform != null) {
-            state.platform = options.platform;
-            state.category = 'all';
-        }
+        if (options.category != null) state.category = options.category;
+        if (options.platform != null) state.platform = options.platform;
+        // Single-dimension nav (header/sidebar chips) clears the other axis.
+        if (options.category != null && options.platform == null) state.platform = 'all';
+        if (options.platform != null && options.category == null) state.category = 'all';
         state.page = 1;
         updateSidebarActive();
         updateNavAria();
@@ -2308,6 +2499,41 @@
                 scrollMainToTop({ behavior: 'smooth' });
             });
         }
+
+        const mirrorSelect = $('#mirrorPrefSelect');
+        if (mirrorSelect) {
+            mirrorSelect.value = getMirrorPref();
+            mirrorSelect.addEventListener('change', () => {
+                setMirrorPref(mirrorSelect.value);
+                appsData = appsData.map(normalizeApp);
+                showToast(
+                    mirrorSelect.value === 'baidu' ? '已优先显示百度镜像' : '已优先显示夸克镜像',
+                    'success'
+                );
+            });
+        }
+
+        const bindSortBrowse = (id, sort) => {
+            const btn = document.getElementById(id);
+            if (!btn) return;
+            btn.addEventListener('click', () => {
+                if (detailAppId) hideAppDetail({ skipScroll: true });
+                hideAboutPage();
+                showStoreHome();
+                state.category = 'all';
+                state.platform = 'all';
+                state.search = '';
+                state.sort = sort;
+                state.page = 1;
+                const sortSelect = $('#sortSelect');
+                if (sortSelect) sortSelect.value = sort;
+                applyStateToUI();
+                applyFilters();
+                scrollToFeed();
+            });
+        };
+        bindSortBrowse('hotViewAll', 'popular');
+        bindSortBrowse('recentViewAll', 'updated');
     }
 
     function setupSearch() {

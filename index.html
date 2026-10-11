@@ -140,6 +140,41 @@
                 </div>
             </section>
 
+            <section class="catalog-stats" id="catalogStats" aria-label="站点数据" hidden></section>
+
+            <section class="discover" id="discoverSection" aria-label="按平台与用途浏览" hidden>
+                <div class="discover-block">
+                    <h2 class="discover-heading">平台</h2>
+                    <div class="discover-grid" id="platformDiscover"></div>
+                </div>
+                <div class="discover-block">
+                    <h2 class="discover-heading">用途</h2>
+                    <div class="discover-grid discover-grid-cats" id="categoryDiscover"></div>
+                </div>
+            </section>
+
+            <section class="showcase" id="hotShowcase" aria-label="热门软件" hidden>
+                <header class="showcase-head">
+                    <div>
+                        <h2 class="showcase-title">热门软件</h2>
+                        <p class="showcase-desc">按 GitHub Star 精选，一键查看详情与镜像</p>
+                    </div>
+                    <button type="button" class="text-link" id="hotViewAll" data-sort="popular">查看全部</button>
+                </header>
+                <div class="showcase-grid" id="hotShowcaseGrid"></div>
+            </section>
+
+            <section class="showcase" id="recentShowcase" aria-label="最近更新" hidden>
+                <header class="showcase-head">
+                    <div>
+                        <h2 class="showcase-title">最近更新</h2>
+                        <p class="showcase-desc">按更新日期排序的开源软件</p>
+                    </div>
+                    <button type="button" class="text-link" id="recentViewAll" data-sort="updated">按更新浏览</button>
+                </header>
+                <div class="showcase-list" id="recentShowcaseList"></div>
+            </section>
+
             <div class="content-layout">
                 <section class="feed" aria-label="软件列表">
                     <div class="feed-toolbar">
@@ -321,6 +356,13 @@
                 <button type="button" data-scroll-to="top">回到首页</button>
                 <button type="button" data-scroll-to="about">关于架集</button>
                 <button type="button" id="footerSearchBtn">搜索软件</button>
+                <label class="mirror-pref">
+                    <span>首选镜像</span>
+                    <select id="mirrorPrefSelect" aria-label="首选镜像源">
+                        <option value="quark">夸克网盘</option>
+                        <option value="baidu">百度网盘</option>
+                    </select>
+                </label>
             </div>
             <div class="footer-bottom">
                 <p>&copy; <span id="footerYear"></span> 架集 ShelfHub. 本站仅提供应用信息展示，版权归原作者所有</p>
@@ -363,6 +405,6 @@
     <button id="featuredNext" type="button" hidden aria-hidden="true"></button>
 
     <script src="js/apps-data.js"></script>
-    <script src="js/main.js?v=20261012e"></script>
+    <script src="js/main.js?v=20261012f"></script>
 </body>
 </html>
