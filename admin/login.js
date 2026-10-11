@@ -24,7 +24,7 @@
 
   // Already logged in → go to console
   api('/admin/me').then(() => {
-    location.replace('./');
+    location.replace('/admin/');
   }).catch(() => {});
 
   $('#togglePassword').addEventListener('click', () => {
@@ -45,7 +45,7 @@
         method: 'POST',
         body: { password: $('#loginPassword').value }
       });
-      location.replace('./');
+      location.replace('/admin/');
     } catch (ex) {
       err.textContent = ex.message;
       err.hidden = false;

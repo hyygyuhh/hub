@@ -14,7 +14,7 @@ function isAdminLoginPath(pathname) {
 }
 
 function loginRedirect(request) {
-  const url = new URL('/admin/login.html', request.url);
+  const url = new URL('/admin/login', request.url);
   return Response.redirect(url.toString(), 302);
 }
 

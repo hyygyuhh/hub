@@ -68,7 +68,7 @@
   }
 
   function goLogin() {
-    location.replace('./login.html');
+    location.replace('./login');
   }
 
   function showAppShell() {
