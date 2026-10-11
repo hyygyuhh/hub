@@ -660,7 +660,7 @@
     }
 
     function setHomeBrowseVisible(on) {
-        ['catalogStats', 'discoverSection', 'hotShowcase', 'recentShowcase'].forEach(id => {
+        ['catalogStats', 'discoverSection'].forEach(id => {
             const el = document.getElementById(id);
             if (el) el.hidden = !on;
         });
@@ -677,8 +677,6 @@
 
         renderCatalogStats();
         renderDiscoverGrids();
-        renderHotShowcase();
-        renderRecentShowcase();
     }
 
     function renderCatalogStats() {
@@ -752,58 +750,6 @@
     function scrollToFeed() {
         const feed = document.querySelector('.content-layout') || $('#essentialList');
         if (feed) feed.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-
-    function renderHotShowcase() {
-        const grid = $('#hotShowcaseGrid');
-        if (!grid) return;
-        const hot = sortByGithubStars(appsData).filter(a => getGithubStars(a) > 0).slice(0, 9);
-        if (!hot.length) {
-            grid.innerHTML = '<p class="muted">暂无热门数据</p>';
-            return;
-        }
-        grid.innerHTML = hot.map(app => {
-            const stars = getGithubStars(app);
-            const mirrors = (app.downloadSources || []).length;
-            return '<button type="button" class="showcase-card" data-id="' + escapeAttr(app.id) + '">' +
-                '<span class="showcase-card-icon" aria-hidden="true">' + (iconHtml(app) || placeholderIconSvg()) + '</span>' +
-                '<span class="showcase-card-body">' +
-                '<span class="showcase-card-name">' + escapeHtml(app.name) + '</span>' +
-                '<span class="showcase-card-meta">' +
-                (app.platform === 'windows' ? 'Windows' : 'Android') +
-                (app.categoryName ? ' · ' + escapeHtml(app.categoryName) : '') +
-                (stars ? ' · ★ ' + formatGithubStars(stars) : '') +
-                (app.version ? ' · v' + escapeHtml(app.version) : '') +
-                (mirrors ? ' · ' + mirrors + ' 镜像' : ' · 待补镜像') +
-                '</span>' +
-                '<span class="showcase-card-desc">' + escapeHtml(app.description || '') + '</span>' +
-                '</span></button>';
-        }).join('');
-        grid.querySelectorAll('[data-id]').forEach(btn => {
-            btn.addEventListener('click', () => showAppDetail(btn.dataset.id));
-        });
-    }
-
-    function renderRecentShowcase() {
-        const list = $('#recentShowcaseList');
-        if (!list) return;
-        const recent = sortByUpdated(appsData).filter(a => a.updatedDate || a.updatedAt).slice(0, 8);
-        if (!recent.length) {
-            list.innerHTML = '<p class="muted">暂无更新日期</p>';
-            return;
-        }
-        list.innerHTML = recent.map(app =>
-            '<button type="button" class="showcase-row" data-id="' + escapeAttr(app.id) + '">' +
-            '<span><span class="showcase-row-name">' + escapeHtml(app.name) + '</span>' +
-            '<span class="showcase-row-desc">' + escapeHtml(app.description || '') + '</span></span>' +
-            '<span class="showcase-row-meta">' +
-            (app.version ? 'v' + escapeHtml(app.version) + ' · ' : '') +
-            formatAppDate(app.updatedDate || app.updatedAt) +
-            '</span></button>'
-        ).join('');
-        list.querySelectorAll('[data-id]').forEach(btn => {
-            btn.addEventListener('click', () => showAppDetail(btn.dataset.id));
-        });
     }
 
     function updateCategoryFilters() {
@@ -2513,27 +2459,6 @@
             });
         }
 
-        const bindSortBrowse = (id, sort) => {
-            const btn = document.getElementById(id);
-            if (!btn) return;
-            btn.addEventListener('click', () => {
-                if (detailAppId) hideAppDetail({ skipScroll: true });
-                hideAboutPage();
-                showStoreHome();
-                state.category = 'all';
-                state.platform = 'all';
-                state.search = '';
-                state.sort = sort;
-                state.page = 1;
-                const sortSelect = $('#sortSelect');
-                if (sortSelect) sortSelect.value = sort;
-                applyStateToUI();
-                applyFilters();
-                scrollToFeed();
-            });
-        };
-        bindSortBrowse('hotViewAll', 'popular');
-        bindSortBrowse('recentViewAll', 'updated');
     }
 
     function setupSearch() {
