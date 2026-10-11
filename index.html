@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>架集 ShelfHub - GitHub 开源软件国内镜像下载</title>
+    <meta name="description" id="metaDescription" content="架集 ShelfHub - 收录 GitHub 优质开源软件，提供夸克与百度网盘镜像下载，无需加速器即可极速获取 Windows / Android 应用">
+    <meta name="keywords" content="GitHub下载,GitHub镜像,开源软件,Windows软件,Android应用,软件下载,夸克网盘,百度网盘,架集,ShelfHub">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="架集 ShelfHub">
+    <meta property="og:title" id="ogTitle" content="架集 ShelfHub - GitHub 开源软件国内镜像下载">
+    <meta property="og:description" id="ogDescription" content="收录 GitHub 优质开源软件，夸克与百度镜像下载，告别 GitHub 下载慢">
+    <meta property="og:locale" content="zh_CN">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" id="twitterTitle" content="架集 ShelfHub - GitHub 开源软件国内镜像下载">
+    <meta name="twitter:description" id="twitterDescription" content="收录 GitHub 优质开源软件，夸克与百度镜像下载，告别 GitHub 下载慢">
+    <meta name="theme-color" content="#0f6e64" id="themeColorMeta">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&family=Noto+Serif+SC:wght@600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/editorial.css">
+    <script>
+        (function () {
+            try {
+                var t = localStorage.getItem('shelfhub-theme') || localStorage.getItem('echohub-theme') || localStorage.getItem('softhub-theme');
+                if (!t && window.matchMedia('(prefers-color-scheme: dark)').matches) t = 'dark';
+                if (t === 'dark' || t === 'light') document.documentElement.setAttribute('data-theme', t);
+            } catch (e) {}
+        })();
+    </script>
+</head>
+<body class="site">
+    <a class="skip-link" href="#storeMain">跳到主要内容</a>
+    <header class="site-header" id="header">
+        <div class="site-header-inner">
+            <a href="#" class="site-brand" data-scroll-to="top" aria-label="架集 ShelfHub 首页">
+                <svg viewBox="0 0 40 40" class="site-logo" aria-hidden="true" fill="none">
+                    <rect x="4" y="4" width="32" height="32" rx="9" fill="currentColor"/>
+                    <path d="M10 18.5h20" stroke="rgb(var(--color-canvas))" stroke-width="1.8" stroke-linecap="round" opacity="0.35"/>
+                    <path d="M10 28h20" stroke="rgb(var(--color-canvas))" stroke-width="1.8" stroke-linecap="round" opacity="0.35"/>
+                    <rect class="site-logo-tile" x="10" y="9" width="8" height="8" rx="2.2"/>
+                    <rect class="site-logo-tile" x="21" y="9" width="9" height="8" rx="2.2" opacity="0.55"/>
+                    <rect class="site-logo-tile" x="10" y="20.5" width="9" height="8" rx="2.2" opacity="0.7"/>
+                    <rect class="site-logo-tile" x="22" y="20.5" width="8" height="8" rx="2.2"/>
+                </svg>
+                <span class="site-brand-text">
+                    <span class="site-brand-cn">架集</span>
+                    <span class="site-brand-en">ShelfHub</span>
+                </span>
+            </a>
+
+            <div class="site-header-actions">
+                <nav class="site-nav" id="storeNav" aria-label="主导航">
+                    <button class="site-nav-item store-nav-item active" data-category="all" type="button">首页</button>
+                    <button class="site-nav-item store-nav-item" data-category="development" type="button">开发</button>
+                    <button class="site-nav-item store-nav-item" data-platform="windows" type="button">Windows</button>
+                    <button class="site-nav-item store-nav-item" data-platform="android" type="button">Android</button>
+                    <button class="site-nav-item store-nav-item" data-category="office" type="button">办公</button>
+                    <button class="site-nav-item store-nav-item" data-category="entertainment" type="button">影音</button>
+                    <button class="site-nav-item store-nav-item" data-category="system" type="button">系统</button>
+                    <button class="site-nav-item store-nav-item" data-scroll-to="about" type="button">关于</button>
+                </nav>
+
+                <button class="site-search-toggle" id="searchToggle" type="button" aria-expanded="false" aria-controls="searchPanel">
+                    搜索
+                </button>
+                <button class="theme-toggle" id="themeToggle" type="button" aria-label="切换主题">
+                    <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                        <circle cx="12" cy="12" r="5"/>
+                        <line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+                        <line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+                    </svg>
+                    <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+                    </svg>
+                </button>
+                <button class="nav-drawer-toggle" id="drawerToggle" aria-label="菜单" aria-expanded="false" aria-controls="mobileDrawer">
+                    <span></span><span></span><span></span>
+                </button>
+            </div>
+        </div>
+
+        <div class="search-panel" id="searchPanel" hidden>
+            <div class="search-panel-inner">
+                <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                    <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                </svg>
+                <input type="text" id="searchInput" placeholder="搜索 GitHub 开源软件…" autocomplete="off" aria-label="搜索应用">
+                <kbd class="search-kbd" aria-hidden="true">/</kbd>
+                <button class="search-clear" id="searchClear" aria-label="清除搜索" style="display:none;">
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                        <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+                    </svg>
+                </button>
+                <button class="search-btn" id="searchBtn" type="button">搜索</button>
+            </div>
+            <div class="search-suggestions" id="searchSuggestions" hidden role="listbox" aria-label="搜索建议"></div>
+        </div>
+    </header>
+
+    <main class="site-main" id="storeMain">
+        <div class="site-home" id="storeHome">
+            <section class="hero" id="storeWidgets" aria-label="首页导语">
+                <div class="hero-copy">
+                    <p class="hero-eyebrow">ShelfHub Picks</p>
+                    <h1 class="hero-title">GitHub 开源软件，国内镜像极速下载</h1>
+                    <p class="hero-lead" id="heroSubtitle">整理值得关注的开源工具，同步至夸克、百度网盘镜像，告别加速器。</p>
+                </div>
+                <a class="featured-card" id="featuredCard" href="#" hidden>
+                    <span class="featured-label">Featured</span>
+                    <div class="featured-meta" id="featuredMeta"></div>
+                    <h2 class="featured-title" id="featuredTitle"></h2>
+                    <p class="featured-desc" id="featuredDesc"></p>
+                    <span class="featured-cta">查看详情 →</span>
+                </a>
+            </section>
+
+            <section class="faq-strip" aria-label="关于架集">
+                <div>
+                    <h2>架集是什么？</h2>
+                    <p>架集 ShelfHub 是一个中文开源软件发现站，收录 GitHub 优质工具，并提供国内网盘镜像下载。</p>
+                </div>
+                <div>
+                    <h2>如何筛选软件？</h2>
+                    <p>优先收录来源清楚、功能明确、安装方式可验证的开源项目，并标明 GitHub 仓库、版本与镜像源。</p>
+                </div>
+                <div>
+                    <h2>镜像从哪来？</h2>
+                    <p>安装包同步自 GitHub Release，托管于夸克、百度公开网盘，便于国内直接下载。</p>
+                </div>
+            </section>
+
+            <div class="content-layout">
+                <section class="feed" aria-label="软件列表">
+                    <div class="feed-toolbar">
+                        <div>
+                            <h2 class="feed-title" id="essentialTitle">精选开源</h2>
+                            <p class="feed-meta">
+                                <span id="sectionTitle">推荐</span>
+                                <span class="feed-meta-sep" aria-hidden="true">·</span>
+                                <span class="app-count" id="appCount"></span>
+                            </p>
+                        </div>
+                        <select id="sortSelect" class="sort-select" aria-label="排序方式">
+                            <option value="popular">按 Star</option>
+                            <option value="name">按名称</option>
+                            <option value="updated">按更新时间</option>
+                        </select>
+                    </div>
+
+                    <p class="store-tagline" id="storeTagline" hidden>收录 GitHub 优质开源软件 · 国内网盘镜像 · 无需加速器</p>
+
+                    <div class="active-filters" id="activeFilters" hidden></div>
+
+                    <div class="mobile-filters" id="mobileFilters" aria-label="快捷筛选">
+                        <button class="mobile-filter-chip store-nav-item active" data-category="all" type="button">全部</button>
+                        <button class="mobile-filter-chip store-nav-item" data-platform="windows" type="button">Windows</button>
+                        <button class="mobile-filter-chip store-nav-item" data-platform="android" type="button">Android</button>
+                        <button class="mobile-filter-chip chip" data-category="development" type="button">开发</button>
+                        <button class="mobile-filter-chip chip" data-category="office" type="button">办公</button>
+                        <button class="mobile-filter-chip chip" data-category="entertainment" type="button">影音</button>
+                        <button class="mobile-filter-chip chip" data-category="system" type="button">系统</button>
+                        <button class="mobile-filter-chip chip" data-category="design" type="button">创作</button>
+                    </div>
+
+                    <div class="feed-list" id="essentialList" aria-live="polite"></div>
+
+                    <nav class="pagination" id="pagination" aria-label="分页" hidden></nav>
+
+                    <div class="skeleton-grid" id="skeletonGrid" aria-hidden="true"></div>
+
+                    <div class="empty-state" id="emptyState" style="display:none;">
+                        <div class="empty-visual" aria-hidden="true">
+                            <svg viewBox="0 0 80 80" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="34" cy="34" r="18"/>
+                                <path d="M46 46l16 16" stroke-linecap="round"/>
+                                <path d="M26 34h16M34 26v16" stroke-linecap="round" opacity="0.45"/>
+                            </svg>
+                        </div>
+                        <h3>没有找到匹配的应用</h3>
+                        <p>尝试调整筛选条件或搜索关键词</p>
+                        <button class="btn-reset" id="resetBtn" type="button">重置筛选</button>
+                    </div>
+                </section>
+
+                <aside class="sidebar" aria-label="分类与标签">
+                    <div class="sidebar-block">
+                        <h3 class="sidebar-title">平台</h3>
+                        <div class="tag-cloud" id="platformTags">
+                            <button class="tag-chip store-nav-item active" data-category="all" type="button"><span class="tag-chip-label">全部</span></button>
+                            <button class="tag-chip store-nav-item" data-platform="windows" type="button"><span class="tag-chip-label">Windows</span></button>
+                            <button class="tag-chip store-nav-item" data-platform="android" type="button"><span class="tag-chip-label">Android</span></button>
+                        </div>
+                    </div>
+                    <div class="sidebar-block">
+                        <h3 class="sidebar-title">分类</h3>
+                        <div class="tag-cloud" id="categoryTags">
+                            <button class="tag-chip chip active" data-category="all" type="button"><span class="tag-chip-label">全部</span></button>
+                            <button class="tag-chip chip" data-category="office" type="button"><span class="tag-chip-label">办公效率</span></button>
+                            <button class="tag-chip chip" data-category="development" type="button"><span class="tag-chip-label">开发工具</span></button>
+                            <button class="tag-chip chip" data-category="design" type="button"><span class="tag-chip-label">设计创意</span></button>
+                            <button class="tag-chip chip" data-category="entertainment" type="button"><span class="tag-chip-label">影音娱乐</span></button>
+                            <button class="tag-chip chip" data-category="system" type="button"><span class="tag-chip-label">系统工具</span></button>
+                            <button class="tag-chip chip" data-category="network" type="button"><span class="tag-chip-label">网络通讯</span></button>
+                            <button class="tag-chip chip" data-category="security" type="button"><span class="tag-chip-label">安全防护</span></button>
+                        </div>
+                    </div>
+                    <div class="sidebar-block">
+                        <h3 class="sidebar-title">热门开源</h3>
+                        <div class="hot-list" id="hotList"></div>
+                    </div>
+                    <div class="sidebar-block" id="favoritesBlock">
+                        <h3 class="sidebar-title">我的收藏</h3>
+                        <div class="hot-list" id="favoritesList"></div>
+                    </div>
+                    <div class="sidebar-block" id="recentBlock">
+                        <h3 class="sidebar-title">最近浏览</h3>
+                        <div class="hot-list" id="recentList"></div>
+                    </div>
+                </aside>
+            </div>
+        </div>
+
+        <section class="app-detail" id="appDetail" style="display:none;">
+            <div class="detail-toolbar" id="detailToolbar">
+                <button class="back-btn" id="backBtn" type="button">
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                        <polyline points="15 18 9 12 15 6"/>
+                    </svg>
+                    返回列表
+                </button>
+            </div>
+            <div class="detail-content" id="detailContent"></div>
+        </section>
+
+        <section class="about-section" id="about" style="display:none;">
+            <div class="about-card reveal-on-scroll">
+                <span class="hero-eyebrow">关于我们</span>
+                <h2>架集 ShelfHub</h2>
+                <p class="about-lead">专注收录 GitHub 上的优质开源软件，通过国内网盘镜像解决 GitHub Releases 下载慢、需加速器的问题。</p>
+                <p>每款软件均标注原始 GitHub 仓库地址，安装包同步至夸克、百度网盘，让你在国内也能快速、稳定地下载开源工具。</p>
+                <div class="about-stats">
+                    <div class="stat-item">
+                        <span class="stat-num" data-stat="apps">0+</span>
+                        <span class="stat-label">开源软件</span>
+                    </div>
+                    <div class="stat-divider"></div>
+                    <div class="stat-item">
+                        <span class="stat-num" data-stat="sources">2</span>
+                        <span class="stat-label">镜像源</span>
+                    </div>
+                    <div class="stat-divider"></div>
+                    <div class="stat-item">
+                        <span class="stat-num">100%</span>
+                        <span class="stat-label">免费使用</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <aside class="mobile-drawer" id="mobileDrawer" aria-hidden="true">
+        <div class="mobile-drawer-header">
+            <span class="mobile-drawer-title">快捷导航</span>
+            <button class="mobile-drawer-close" id="drawerClose" aria-label="关闭菜单">
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                    <line x1="18" y1="6" x2="6" y2="18"/>
+                    <line x1="6" y1="6" x2="18" y2="18"/>
+                </svg>
+            </button>
+        </div>
+        <nav class="mobile-nav">
+            <button class="mobile-nav-item active" data-category="all" type="button">首页</button>
+            <button class="mobile-nav-item" data-category="development" type="button">开发</button>
+            <button class="mobile-nav-item" data-platform="windows" type="button">Windows</button>
+            <button class="mobile-nav-item" data-platform="android" type="button">Android</button>
+            <button class="mobile-nav-item" data-category="office" type="button">办公</button>
+            <button class="mobile-nav-item" data-category="entertainment" type="button">影音</button>
+            <button class="mobile-nav-item" data-category="system" type="button">系统</button>
+            <button class="mobile-nav-item" data-scroll-to="about" type="button">关于架集</button>
+        </nav>
+    </aside>
+    <div class="drawer-overlay" id="drawerOverlay"></div>
+
+    <footer class="footer">
+        <div class="footer-inner">
+            <div class="footer-brand">
+                <div class="site-brand footer-logo">
+                    <svg viewBox="0 0 40 40" class="site-logo" aria-hidden="true" fill="none">
+                        <rect x="4" y="4" width="32" height="32" rx="9" fill="currentColor"/>
+                        <path d="M10 18.5h20" stroke="rgb(var(--color-canvas))" stroke-width="1.8" stroke-linecap="round" opacity="0.35"/>
+                        <path d="M10 28h20" stroke="rgb(var(--color-canvas))" stroke-width="1.8" stroke-linecap="round" opacity="0.35"/>
+                        <rect class="site-logo-tile" x="10" y="9" width="8" height="8" rx="2.2"/>
+                        <rect class="site-logo-tile" x="21" y="9" width="9" height="8" rx="2.2" opacity="0.55"/>
+                        <rect class="site-logo-tile" x="10" y="20.5" width="9" height="8" rx="2.2" opacity="0.7"/>
+                        <rect class="site-logo-tile" x="22" y="20.5" width="8" height="8" rx="2.2"/>
+                    </svg>
+                    <span class="site-brand-text">
+                        <span class="site-brand-cn">架集</span>
+                        <span class="site-brand-en">ShelfHub</span>
+                    </span>
+                </div>
+                <p>GitHub 开源软件 · 国内镜像下载</p>
+            </div>
+            <div class="footer-links">
+                <button type="button" data-scroll-to="top">回到首页</button>
+                <button type="button" data-scroll-to="about">关于架集</button>
+                <button type="button" id="footerSearchBtn">搜索软件</button>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; <span id="footerYear"></span> 架集 ShelfHub. 本站仅提供应用信息展示，版权归原作者所有</p>
+            </div>
+        </div>
+    </footer>
+
+    <button class="back-to-top" id="backToTop" aria-label="返回顶部" title="返回顶部">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+            <polyline points="18 15 12 9 6 15"/>
+        </svg>
+    </button>
+
+    <div class="modal" id="downloadModal" style="display:none;" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+        <div class="modal-overlay" id="modalOverlay"></div>
+        <div class="modal-content">
+            <button class="modal-close" id="modalClose" aria-label="关闭">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                    <line x1="18" y1="6" x2="6" y2="18"/>
+                    <line x1="6" y1="6" x2="18" y2="18"/>
+                </svg>
+            </button>
+            <div class="modal-header">
+                <div class="modal-icon" id="modalAppIcon"></div>
+                <div>
+                    <h3 id="modalTitle">选择镜像下载源</h3>
+                    <p class="modal-app-name" id="modalAppName"></p>
+                </div>
+            </div>
+            <div class="download-sources-list" id="downloadSourcesList"></div>
+        </div>
+    </div>
+
+    <div class="toast-container" id="toastContainer" aria-live="polite"></div>
+
+    <!-- Legacy hooks kept for JS compatibility -->
+    <div id="storeBody" hidden></div>
+    <div id="promoRow" hidden></div>
+    <div id="featuredTrack" hidden></div>
+    <button id="featuredNext" type="button" hidden aria-hidden="true"></button>
+
+    <script src="js/apps-data.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>

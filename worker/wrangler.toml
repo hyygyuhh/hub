@@ -1,0 +1,3 @@
+# API is served by Cloudflare Pages Functions (see /functions).
+# Use the root wrangler.toml for Pages + D1 binding.
+# Schema: schema.sql

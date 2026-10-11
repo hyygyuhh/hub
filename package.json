@@ -1,0 +1,15 @@
+{
+  "name": "shelfhub",
+  "private": true,
+  "version": "1.0.0",
+  "description": "架集 ShelfHub — GitHub 开源软件国内镜像站",
+  "scripts": {
+    "dev": "wrangler pages dev . --d1=DB --persist-to=.wrangler/state",
+    "db:local": "wrangler d1 execute shelfhub --local --file=worker/schema.sql",
+    "db:remote": "wrangler d1 execute shelfhub --remote --file=worker/schema.sql",
+    "deploy": "wrangler pages deploy . --project-name=shelfhub"
+  },
+  "devDependencies": {
+    "wrangler": "^3.99.0"
+  }
+}
