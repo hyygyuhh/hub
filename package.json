@@ -7,6 +7,8 @@
     "dev": "wrangler pages dev . --d1=DB --persist-to=.wrangler/state",
     "db:local": "wrangler d1 execute shelfhub --local --file=worker/schema.sql",
     "db:remote": "wrangler d1 execute shelfhub --remote --file=worker/schema.sql",
+    "db:seed": "node scripts/seed-popular-apps.mjs",
+    "db:seed:local": "node scripts/seed-popular-apps.mjs --local",
     "deploy": "wrangler pages deploy . --project-name=shelfhub"
   },
   "devDependencies": {

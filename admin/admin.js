@@ -2,13 +2,16 @@
   'use strict';
 
   const CATEGORY_NAMES = {
+    ai: 'AI 工具',
     development: '开发工具',
     office: '办公效率',
     design: '设计创意',
     entertainment: '影音娱乐',
     system: '系统工具',
-    network: '网络传输',
-    security: '安全隐私'
+    network: '网络通讯',
+    security: '安全防护',
+    tools: '实用工具',
+    games: '游戏娱乐'
   };
 
   const state = {

@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&family=Noto+Serif+SC:wght@600;700;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="admin.css?v=20261012d">
+    <link rel="stylesheet" href="admin.css?v=20261012e">
 </head>
 <body>
     <!-- Console shell (server middleware requires login session) -->
@@ -170,13 +170,16 @@ npx wrangler pages secret put ADMIN_PASSWORD --project-name=shelfhub</pre>
                                     <label class="field">
                                         <span>分类 *</span>
                                         <select name="category" id="fieldCategory" required>
+                                            <option value="ai">ai · AI 工具</option>
                                             <option value="development">development · 开发工具</option>
                                             <option value="office">office · 办公效率</option>
                                             <option value="design">design · 设计创意</option>
                                             <option value="entertainment">entertainment · 影音娱乐</option>
                                             <option value="system">system · 系统工具</option>
-                                            <option value="network">network · 网络传输</option>
-                                            <option value="security">security · 安全隐私</option>
+                                            <option value="network">network · 网络通讯</option>
+                                            <option value="security">security · 安全防护</option>
+                                            <option value="tools">tools · 实用工具</option>
+                                            <option value="games">games · 游戏娱乐</option>
                                         </select>
                                     </label>
                                     <label class="field">
@@ -262,6 +265,6 @@ npx wrangler pages secret put ADMIN_PASSWORD --project-name=shelfhub</pre>
 
     <div id="toast" class="toast" hidden></div>
     <div id="busy" class="busy" hidden><div class="busy-bar"></div></div>
-    <script src="admin.js?v=20261012d"></script>
+    <script src="admin.js?v=20261012e"></script>
 </body>
 </html>

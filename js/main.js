@@ -273,24 +273,30 @@
 
     const CHIP_LABELS = {
         all: '全部',
-        office: '办公效率',
+        ai: 'AI 工具',
         development: '开发工具',
+        office: '办公效率',
         design: '设计创意',
         entertainment: '影音娱乐',
         system: '系统工具',
         network: '网络通讯',
-        security: '安全防护'
+        security: '安全防护',
+        tools: '实用工具',
+        games: '游戏娱乐'
     };
 
     const SIDEBAR_LABELS = {
         all: '推荐',
-        office: '办公',
+        ai: 'AI',
         development: '开发',
+        office: '办公',
         design: '创作',
         entertainment: '影音',
         system: '系统',
         network: '网络',
-        security: '安全'
+        security: '安全',
+        tools: '工具',
+        games: '游戏'
     };
 
     function highlightSearch(text, query) {
@@ -2066,7 +2072,7 @@
         const list = $('#downloadSourcesList');
         const sources = app.downloadSources || [];
         if (!sources.length) {
-            list.innerHTML = '<p class="modal-empty">暂无可用镜像源</p>';
+            list.innerHTML = '<p class="modal-empty">暂无国内镜像，请先前往 GitHub 仓库下载，或稍后再试。</p>';
         } else {
             list.innerHTML = renderDownloadSources(sources);
             bindDownloadSourceEvents(list, { closeModal: true, appId: appId });

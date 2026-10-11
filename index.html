@@ -59,10 +59,11 @@
             <div class="site-header-actions">
                 <nav class="site-nav" id="storeNav" aria-label="主导航">
                     <button class="site-nav-item store-nav-item active" data-category="all" type="button">首页</button>
+                    <button class="site-nav-item store-nav-item" data-category="ai" type="button">AI</button>
                     <button class="site-nav-item store-nav-item" data-category="development" type="button">开发</button>
                     <button class="site-nav-item store-nav-item" data-platform="windows" type="button">Windows</button>
                     <button class="site-nav-item store-nav-item" data-platform="android" type="button">Android</button>
-                    <button class="site-nav-item store-nav-item" data-category="office" type="button">办公</button>
+                    <button class="site-nav-item store-nav-item" data-category="tools" type="button">工具</button>
                     <button class="site-nav-item store-nav-item" data-category="entertainment" type="button">影音</button>
                     <button class="site-nav-item store-nav-item" data-category="system" type="button">系统</button>
                     <button class="site-nav-item store-nav-item" data-scroll-to="about" type="button">关于</button>
@@ -113,7 +114,7 @@
                 <div class="hero-copy">
                     <p class="hero-eyebrow">ShelfHub Picks</p>
                     <h1 class="hero-title">GitHub 开源软件，国内镜像极速下载</h1>
-                    <p class="hero-lead" id="heroSubtitle">整理值得关注的开源工具，同步至夸克、百度网盘镜像，告别加速器。</p>
+                    <p class="hero-lead" id="heroSubtitle">按 AI / 开发 / 系统 / 影音等用途分类收录 Windows 与 Android 开源软件，同步夸克、百度镜像，告别加速器。</p>
                 </div>
                 <a class="featured-card" id="featuredCard" href="#" hidden>
                     <span class="featured-label">Featured</span>
@@ -127,15 +128,15 @@
             <section class="faq-strip" aria-label="关于架集">
                 <div>
                     <h2>架集是什么？</h2>
-                    <p>架集 ShelfHub 是一个中文开源软件发现站，收录 GitHub 优质工具，并提供国内网盘镜像下载。</p>
+                    <p>架集 ShelfHub 聚合 GitHub 热门开源软件，按用途分类（AI、开发、系统、影音等），并提供国内网盘镜像下载。</p>
                 </div>
                 <div>
                     <h2>如何筛选软件？</h2>
-                    <p>优先收录来源清楚、功能明确、安装方式可验证的开源项目，并标明 GitHub 仓库、版本与镜像源。</p>
+                    <p>可按平台（Windows / Android）与分类浏览，每款软件标注 GitHub 仓库、Star、版本，方便核对来源。</p>
                 </div>
                 <div>
                     <h2>镜像从哪来？</h2>
-                    <p>安装包同步自 GitHub Release，托管于夸克、百度公开网盘，便于国内直接下载。</p>
+                    <p>安装包对应 GitHub Release，由维护者同步至夸克、百度公开网盘；未配置镜像的条目可先查看上游仓库。</p>
                 </div>
             </section>
 
@@ -165,11 +166,12 @@
                         <button class="mobile-filter-chip store-nav-item active" data-category="all" type="button">全部</button>
                         <button class="mobile-filter-chip store-nav-item" data-platform="windows" type="button">Windows</button>
                         <button class="mobile-filter-chip store-nav-item" data-platform="android" type="button">Android</button>
+                        <button class="mobile-filter-chip chip" data-category="ai" type="button">AI</button>
                         <button class="mobile-filter-chip chip" data-category="development" type="button">开发</button>
-                        <button class="mobile-filter-chip chip" data-category="office" type="button">办公</button>
+                        <button class="mobile-filter-chip chip" data-category="tools" type="button">工具</button>
                         <button class="mobile-filter-chip chip" data-category="entertainment" type="button">影音</button>
                         <button class="mobile-filter-chip chip" data-category="system" type="button">系统</button>
-                        <button class="mobile-filter-chip chip" data-category="design" type="button">创作</button>
+                        <button class="mobile-filter-chip chip" data-category="network" type="button">网络</button>
                     </div>
 
                     <div class="feed-list" id="essentialList" aria-live="polite"></div>
@@ -205,13 +207,16 @@
                         <h3 class="sidebar-title">分类</h3>
                         <div class="tag-cloud" id="categoryTags">
                             <button class="tag-chip chip active" data-category="all" type="button"><span class="tag-chip-label">全部</span></button>
-                            <button class="tag-chip chip" data-category="office" type="button"><span class="tag-chip-label">办公效率</span></button>
+                            <button class="tag-chip chip" data-category="ai" type="button"><span class="tag-chip-label">AI 工具</span></button>
                             <button class="tag-chip chip" data-category="development" type="button"><span class="tag-chip-label">开发工具</span></button>
+                            <button class="tag-chip chip" data-category="tools" type="button"><span class="tag-chip-label">实用工具</span></button>
+                            <button class="tag-chip chip" data-category="office" type="button"><span class="tag-chip-label">办公效率</span></button>
                             <button class="tag-chip chip" data-category="design" type="button"><span class="tag-chip-label">设计创意</span></button>
                             <button class="tag-chip chip" data-category="entertainment" type="button"><span class="tag-chip-label">影音娱乐</span></button>
                             <button class="tag-chip chip" data-category="system" type="button"><span class="tag-chip-label">系统工具</span></button>
                             <button class="tag-chip chip" data-category="network" type="button"><span class="tag-chip-label">网络通讯</span></button>
                             <button class="tag-chip chip" data-category="security" type="button"><span class="tag-chip-label">安全防护</span></button>
+                            <button class="tag-chip chip" data-category="games" type="button"><span class="tag-chip-label">游戏娱乐</span></button>
                         </div>
                     </div>
                     <div class="sidebar-block">
@@ -246,8 +251,8 @@
             <div class="about-card reveal-on-scroll">
                 <span class="hero-eyebrow">关于我们</span>
                 <h2>架集 ShelfHub</h2>
-                <p class="about-lead">专注收录 GitHub 上的优质开源软件，通过国内网盘镜像解决 GitHub Releases 下载慢、需加速器的问题。</p>
-                <p>每款软件均标注原始 GitHub 仓库地址，安装包同步至夸克、百度网盘，让你在国内也能快速、稳定地下载开源工具。</p>
+                <p class="about-lead">聚合 GitHub 热门开源软件，按 AI、开发、系统、影音等用途分类，通过国内网盘镜像解决 Releases 下载慢的问题。</p>
+                <p>每款软件标注原始仓库与版本信息；镜像由维护者同步至夸克、百度。未配置镜像时可先前往 GitHub 获取安装包。</p>
                 <div class="about-stats">
                     <div class="stat-item">
                         <span class="stat-num" data-stat="apps">0+</span>
@@ -280,10 +285,11 @@
         </div>
         <nav class="mobile-nav">
             <button class="mobile-nav-item active" data-category="all" type="button">首页</button>
+            <button class="mobile-nav-item" data-category="ai" type="button">AI</button>
             <button class="mobile-nav-item" data-category="development" type="button">开发</button>
             <button class="mobile-nav-item" data-platform="windows" type="button">Windows</button>
             <button class="mobile-nav-item" data-platform="android" type="button">Android</button>
-            <button class="mobile-nav-item" data-category="office" type="button">办公</button>
+            <button class="mobile-nav-item" data-category="tools" type="button">工具</button>
             <button class="mobile-nav-item" data-category="entertainment" type="button">影音</button>
             <button class="mobile-nav-item" data-category="system" type="button">系统</button>
             <button class="mobile-nav-item" data-scroll-to="about" type="button">关于架集</button>
@@ -357,6 +363,6 @@
     <button id="featuredNext" type="button" hidden aria-hidden="true"></button>
 
     <script src="js/apps-data.js"></script>
-    <script src="js/main.js"></script>
+    <script src="js/main.js?v=20261012e"></script>
 </body>
 </html>
