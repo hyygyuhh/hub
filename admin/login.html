@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>登录 · 架集管理后台</title>
+    <meta name="robots" content="noindex,nofollow">
+    <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&family=Noto+Serif+SC:wght@600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="admin.css?v=20261012c">
+</head>
+<body>
+    <div class="login-screen">
+        <div class="login-atmosphere" aria-hidden="true"></div>
+        <div class="login-stage">
+            <header class="login-brand-block">
+                <p class="login-kicker">ShelfHub Console</p>
+                <h1 class="login-logo">架集</h1>
+                <p class="login-tagline">登录后才能进入管理后台</p>
+            </header>
+            <form id="loginForm" class="login-form" autocomplete="on">
+                <label class="field">
+                    <span>管理员密码</span>
+                    <div class="password-row">
+                        <input type="password" id="loginPassword" name="password" required autocomplete="current-password" placeholder="Cloudflare ADMIN_PASSWORD">
+                        <button type="button" class="text-btn" id="togglePassword">显示</button>
+                    </div>
+                </label>
+                <p class="field-note">改本地 <code>.dev.vars</code> 不会更新线上密码</p>
+                <p class="form-error" id="loginError" hidden></p>
+                <button type="submit" class="btn-primary btn-wide" id="loginBtn">进入后台</button>
+            </form>
+        </div>
+    </div>
+    <script src="login.js?v=20261012c"></script>
+</body>
+</html>

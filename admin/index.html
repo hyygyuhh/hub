@@ -9,35 +9,11 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&family=Noto+Serif+SC:wght@600;700;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="admin.css?v=20261012b">
+    <link rel="stylesheet" href="admin.css?v=20261012c">
 </head>
 <body>
-    <!-- Login: brand-first full composition -->
-    <div id="loginView" class="login-screen">
-        <div class="login-atmosphere" aria-hidden="true"></div>
-        <div class="login-stage">
-            <header class="login-brand-block">
-                <p class="login-kicker">ShelfHub Console</p>
-                <h1 class="login-logo">架集</h1>
-                <p class="login-tagline">软件货架的后台台账</p>
-            </header>
-            <form id="loginForm" class="login-form" autocomplete="on">
-                <label class="field">
-                    <span>管理员密码</span>
-                    <div class="password-row">
-                        <input type="password" id="loginPassword" name="password" required autocomplete="current-password" placeholder="Cloudflare ADMIN_PASSWORD">
-                        <button type="button" class="text-btn" id="togglePassword">显示</button>
-                    </div>
-                </label>
-                <p class="field-note">改本地 <code>.dev.vars</code> 不会更新线上密码</p>
-                <p class="form-error" id="loginError" hidden></p>
-                <button type="submit" class="btn-primary btn-wide" id="loginBtn">进入后台</button>
-            </form>
-        </div>
-    </div>
-
-    <!-- App shell -->
-    <div id="appView" class="console" hidden>
+    <!-- Console shell (server middleware requires login session) -->
+    <div id="appView" class="console">
         <header class="masthead">
             <div class="masthead-inner">
                 <a class="mast-brand" href="#dashboard" data-view="dashboard">
@@ -279,6 +255,6 @@
 
     <div id="toast" class="toast" hidden></div>
     <div id="busy" class="busy" hidden><div class="busy-bar"></div></div>
-    <script src="admin.js?v=20261012b"></script>
+    <script src="admin.js?v=20261012c"></script>
 </body>
 </html>

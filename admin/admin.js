@@ -41,6 +41,9 @@
     let data = null;
     try { data = await res.json(); } catch (_) { data = null; }
     if (!res.ok) {
+      if (res.status === 401 && path !== '/admin/login' && path !== '/admin/me') {
+        goLogin();
+      }
       const err = new Error((data && data.error) || ('请求失败 ' + res.status));
       err.status = res.status;
       err.payload = data;
@@ -64,14 +67,13 @@
     $('#busy').hidden = !on;
   }
 
-  function showLogin() {
-    $('#loginView').hidden = false;
-    $('#appView').hidden = true;
+  function goLogin() {
+    location.replace('./login.html');
   }
 
   function showAppShell() {
-    $('#loginView').hidden = true;
-    $('#appView').hidden = false;
+    const el = $('#appView');
+    if (el) el.hidden = false;
   }
 
   function askConfirm(title, message) {
@@ -106,7 +108,7 @@
           escapeHtml(e.message) + '</p></div>';
         return false;
       }
-      showLogin();
+      goLogin();
       return false;
     }
   }
@@ -497,41 +499,9 @@
   }
 
   function bindEvents() {
-    $('#loginForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const err = $('#loginError');
-      err.hidden = true;
-      const btn = $('#loginBtn');
-      btn.disabled = true;
-      try {
-        await api('/admin/login', {
-          method: 'POST',
-          body: { password: $('#loginPassword').value }
-        });
-        state.me = await api('/admin/me');
-        showAppShell();
-        updateSecurityUi();
-        setView('dashboard');
-        await refreshAll();
-        toast('登录成功', 'ok');
-      } catch (ex) {
-        err.textContent = ex.message;
-        err.hidden = false;
-      } finally {
-        btn.disabled = false;
-      }
-    });
-
-    $('#togglePassword').addEventListener('click', () => {
-      const input = $('#loginPassword');
-      const show = input.type === 'password';
-      input.type = show ? 'text' : 'password';
-      $('#togglePassword').textContent = show ? '隐藏' : '显示';
-    });
-
     $('#logoutBtn').addEventListener('click', async () => {
       try { await api('/admin/logout', { method: 'POST' }); } catch (_) {}
-      showLogin();
+      goLogin();
     });
 
     $$('.nav-btn').forEach(btn => {
