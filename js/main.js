@@ -191,8 +191,85 @@
 
     const DEFAULT_META = {
         title: '架集 ShelfHub - GitHub 开源软件国内镜像下载',
-        description: '架集 ShelfHub - 收录 GitHub 优质开源软件，提供夸克与百度网盘镜像下载，无需加速器即可极速获取'
+        description: '架集 ShelfHub - 收录 GitHub 优质开源软件，提供夸克与百度网盘镜像下载，无需加速器即可极速获取',
+        keywords: 'GitHub下载,GitHub镜像,开源软件,Windows软件,Android应用,软件下载,夸克网盘,百度网盘,架集,ShelfHub'
     };
+
+    function siteOrigin() {
+        return location.origin && location.origin !== 'null'
+            ? location.origin
+            : 'https://shelfhub.pages.dev';
+    }
+
+    function truncateMeta(str, max) {
+        const s = String(str || '').replace(/\s+/g, ' ').trim();
+        if (s.length <= max) return s;
+        return s.slice(0, max - 1).trimEnd() + '…';
+    }
+
+    function buildHomeMetaFromApps() {
+        const count = appsData.length;
+        if (!count) return Object.assign({}, DEFAULT_META);
+
+        const win = appsData.filter(a => a.platform === 'windows').length;
+        const android = appsData.filter(a => a.platform === 'android').length;
+        const names = appsData.slice(0, 8).map(a => a.name).filter(Boolean);
+        const namePart = names.length ? '，当前收录：' + names.join('、') : '';
+        const description = truncateMeta(
+            '架集 ShelfHub 收录 ' + count + ' 款 GitHub 开源软件（Windows ' + win +
+            ' / Android ' + android + '），提供夸克与百度网盘镜像下载' + namePart + '。',
+            160
+        );
+
+        const keywords = Array.from(new Set(
+            DEFAULT_META.keywords.split(',').concat(
+                appsData.flatMap(app => [
+                    app.name,
+                    app.name ? app.name + '下载' : '',
+                    app.categoryName || ''
+                ]).filter(Boolean)
+            )
+        )).slice(0, 40).join(',');
+
+        return {
+            title: DEFAULT_META.title,
+            description: description,
+            keywords: keywords,
+            url: siteOrigin() + '/'
+        };
+    }
+
+    function buildAppMeta(app) {
+        const platform = app.platform === 'windows' ? 'Windows' : 'Android';
+        const mirrors = (app.downloadSources || []).length;
+        const description = truncateMeta([
+            app.description || '',
+            app.name + ' ' + platform + ' 版镜像下载',
+            app.version ? '版本 ' + app.version : '',
+            mirrors ? mirrors + ' 个国内网盘镜像' : '国内网盘镜像',
+            '架集 ShelfHub'
+        ].filter(Boolean).join(' · '), 160);
+
+        const keywords = Array.from(new Set([
+            app.name,
+            app.name + '下载',
+            app.name + ' GitHub',
+            platform + '软件',
+            app.categoryName,
+            'GitHub镜像',
+            '夸克网盘',
+            '百度网盘',
+            '架集',
+            'ShelfHub'
+        ].filter(Boolean))).join(',');
+
+        return {
+            title: app.name + ' 下载（' + platform + '）- 架集 ShelfHub',
+            description: description,
+            keywords: keywords,
+            url: getAppShareUrl(app.id)
+        };
+    }
 
     const CHIP_LABELS = {
         all: '全部',
@@ -237,11 +314,20 @@
     }
 
     function updatePageMeta(meta) {
-        meta = meta || DEFAULT_META;
+        meta = meta || buildHomeMetaFromApps();
         document.title = meta.title;
 
         const descEl = $('#metaDescription');
         if (descEl) descEl.setAttribute('content', meta.description);
+
+        const keywordsEl = $('#metaKeywords');
+        if (keywordsEl && meta.keywords) keywordsEl.setAttribute('content', meta.keywords);
+
+        const pageUrl = meta.url || (siteOrigin() + '/');
+        const canonical = $('#canonicalLink');
+        if (canonical) canonical.setAttribute('href', pageUrl);
+        const ogUrl = $('#ogUrl');
+        if (ogUrl) ogUrl.setAttribute('content', pageUrl);
 
         ['ogTitle', 'twitterTitle'].forEach(id => {
             const el = document.getElementById(id);
@@ -263,6 +349,8 @@
             document.head.appendChild(script);
         }
 
+        const origin = siteOrigin();
+
         if (app) {
             const ld = {
                 '@context': 'https://schema.org',
@@ -272,24 +360,52 @@
                 applicationCategory: app.categoryName,
                 operatingSystem: app.platform === 'windows' ? 'Windows' : 'Android',
                 softwareVersion: app.version,
-                url: getAppShareUrl(app.id)
+                url: getAppShareUrl(app.id),
+                offers: {
+                    '@type': 'Offer',
+                    price: '0',
+                    priceCurrency: 'CNY'
+                }
             };
             if (app.githubUrl) ld.codeRepository = app.githubUrl;
+            if (app.githubStars > 0) {
+                ld.interactionStatistic = {
+                    '@type': 'InteractionCounter',
+                    interactionType: 'https://schema.org/LikeAction',
+                    userInteractionCount: app.githubStars
+                };
+            }
             script.textContent = JSON.stringify(ld);
             return;
         }
 
         script.textContent = JSON.stringify({
             '@context': 'https://schema.org',
-            '@type': 'ItemList',
-            name: '架集 ShelfHub 开源软件列表',
-            numberOfItems: appsData.length,
-            itemListElement: appsData.slice(0, 20).map((item, index) => ({
-                '@type': 'ListItem',
-                position: index + 1,
-                name: item.name,
-                url: getAppShareUrl(item.id)
-            }))
+            '@graph': [
+                {
+                    '@type': 'WebSite',
+                    name: '架集 ShelfHub',
+                    url: origin + '/',
+                    description: buildHomeMetaFromApps().description,
+                    inLanguage: 'zh-CN',
+                    potentialAction: {
+                        '@type': 'SearchAction',
+                        target: origin + '/?q={search_term_string}',
+                        'query-input': 'required name=search_term_string'
+                    }
+                },
+                {
+                    '@type': 'ItemList',
+                    name: '架集 ShelfHub 开源软件列表',
+                    numberOfItems: appsData.length,
+                    itemListElement: appsData.slice(0, 30).map((item, index) => ({
+                        '@type': 'ListItem',
+                        position: index + 1,
+                        name: item.name,
+                        url: getAppShareUrl(item.id)
+                    }))
+                }
+            ]
         });
     }
 
@@ -492,7 +608,10 @@
         renderHotList();
         renderFavoritesList();
         renderRecentList();
-        updateJsonLd();
+        if (!detailAppId) {
+            updatePageMeta(buildHomeMetaFromApps());
+            updateJsonLd();
+        }
     }
 
     function updateCategoryFilters() {
@@ -1137,10 +1256,7 @@
     }
 
     function getAppShareUrl(id) {
-        const base = location.origin && location.origin !== 'null'
-            ? location.origin + location.pathname
-            : location.href.split('#')[0];
-        return base + '#app/' + encodeURIComponent(id);
+        return siteOrigin() + '/a/' + encodeURIComponent(id);
     }
 
     function setupHashRouting() {
@@ -1633,7 +1749,7 @@
     function hideAppDetail(options) {
         options = options || {};
         detailAppId = null;
-        updatePageMeta();
+        updatePageMeta(buildHomeMetaFromApps());
         updateJsonLd();
 
         $('#appDetail').style.display = 'none';
@@ -1821,10 +1937,7 @@
         aboutViewActive = false;
         pushRecent(id);
         trackEvent('app_view', id);
-        updatePageMeta({
-            title: app.name + ' - 架集 ShelfHub',
-            description: app.description + ' | ' + app.categoryName + ' · v' + app.version
-        });
+        updatePageMeta(buildAppMeta(app));
         updateJsonLd(app);
 
         const content = $('#detailContent');
