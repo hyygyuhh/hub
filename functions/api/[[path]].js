@@ -129,16 +129,23 @@ export async function onRequest(context) {
       // POST /api/admin/login
       if (parts[1] === 'login' && parts.length === 2 && method === 'POST') {
         const body = await readJson(request);
+        const username = body && body.username;
         const password = body && body.password;
         if (!env.ADMIN_PASSWORD) {
           return withCors(request, error('服务器未配置 ADMIN_PASSWORD', 500));
         }
-        const ok = await timingSafeEqual(password, env.ADMIN_PASSWORD);
-        if (!ok) {
-          return withCors(request, error('密码错误（线上密码以 Cloudflare Secret 为准，改 .dev.vars 不会生效）', 401));
+        // ADMIN_USERNAME 未配置时默认 admin，便于平滑升级
+        const expectedUser = String(env.ADMIN_USERNAME || 'admin').trim();
+        const userOk = await timingSafeEqual(username, expectedUser);
+        const passOk = await timingSafeEqual(password, env.ADMIN_PASSWORD);
+        if (!userOk || !passOk) {
+          return withCors(request, error('账号或密码错误', 401));
         }
         const { token } = await createSession(env);
-        return withCors(request, json({ ok: true }, 200, {
+        return withCors(request, json({
+          ok: true,
+          username: expectedUser
+        }, 200, {
           'Set-Cookie': sessionCookie(request, token, SESSION_DAYS * 86400)
         }));
       }
@@ -163,6 +170,7 @@ export async function onRequest(context) {
         return withCors(request, json({
           ok: true,
           role: 'admin',
+          username: String(env.ADMIN_USERNAME || 'admin').trim(),
           ip: clientIp(request),
           ipAllowlistEnabled: allow.length > 0,
           ipAllowlistCount: allow.length

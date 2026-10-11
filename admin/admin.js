@@ -55,12 +55,19 @@
   function toast(msg, type) {
     const el = $('#toast');
     el.textContent = msg;
-    el.classList.remove('is-error', 'is-ok');
+    el.classList.remove('is-error', 'is-ok', 'is-leaving');
     if (type === 'error') el.classList.add('is-error');
     if (type === 'ok') el.classList.add('is-ok');
     el.hidden = false;
     clearTimeout(toast._t);
-    toast._t = setTimeout(() => { el.hidden = true; }, 2800);
+    clearTimeout(toast._hide);
+    toast._t = setTimeout(() => {
+      el.classList.add('is-leaving');
+      toast._hide = setTimeout(() => {
+        el.hidden = true;
+        el.classList.remove('is-leaving');
+      }, 180);
+    }, 2600);
   }
 
   function setBusy(on) {
@@ -115,6 +122,11 @@
 
   function updateSecurityUi() {
     const ip = (state.me && state.me.ip) || '—';
+    const username = (state.me && state.me.username) || 'admin';
+    const mastUser = $('#mastUser');
+    if (mastUser) mastUser.textContent = username;
+    const securityUser = $('#securityUser');
+    if (securityUser) securityUser.textContent = username;
     $('#sidebarIp').textContent = 'IP ' + ip;
     $('#securityIp').textContent = ip;
     const status = $('#securityAllowStatus');
@@ -241,8 +253,10 @@
       return;
     }
     empty.hidden = true;
-    body.innerHTML = apps.map(app => `
-      <tr>
+    body.innerHTML = apps.map(app => {
+      const mirrors = (app.downloadSources || []).length;
+      return `
+      <tr class="is-clickable" data-open="${escapeAttr(app.id)}" tabindex="0">
         <td>
           <div class="app-cell">
             ${iconThumbHtml(app.icon)}
@@ -252,9 +266,11 @@
             </div>
           </div>
         </td>
-        <td>${escapeHtml(app.platform)}</td>
+        <td><span class="badge">${escapeHtml(app.platform === 'windows' ? 'Windows' : 'Android')}</span></td>
         <td>${escapeHtml(app.categoryName || app.category)}</td>
-        <td>${(app.downloadSources || []).length}</td>
+        <td>${mirrors
+          ? escapeHtml(mirrors)
+          : '<span class="badge is-warn">缺镜像</span>'}</td>
         <td>${escapeHtml(app.githubStars || 0)}</td>
         <td>
           <div class="row-actions">
@@ -262,14 +278,32 @@
             <button type="button" class="btn-danger" data-del="${escapeAttr(app.id)}">删除</button>
           </div>
         </td>
-      </tr>
-    `).join('');
+      </tr>`;
+    }).join('');
 
+    body.querySelectorAll('[data-open]').forEach(row => {
+      row.addEventListener('click', (e) => {
+        if (e.target.closest('button')) return;
+        openEditor(row.dataset.open);
+      });
+      row.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          openEditor(row.dataset.open);
+        }
+      });
+    });
     body.querySelectorAll('[data-edit]').forEach(btn => {
-      btn.addEventListener('click', () => openEditor(btn.dataset.edit));
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        openEditor(btn.dataset.edit);
+      });
     });
     body.querySelectorAll('[data-del]').forEach(btn => {
-      btn.addEventListener('click', () => deleteApp(btn.dataset.del));
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        deleteApp(btn.dataset.del);
+      });
     });
   }
 
@@ -283,9 +317,9 @@
 
     const titles = {
       dashboard: ['概览', '站点台账与近七日动向'],
-      apps: ['应用', '检索、编辑与上架软件'],
-      editor: [state.editingId ? '编辑应用' : '新增应用', '资料、图标与镜像'],
-      security: ['安全', 'IP 白名单与密码']
+      apps: ['应用', '检索、编辑与上架软件 · 点击行即可编辑'],
+      editor: [state.editingId ? '编辑应用' : '新增应用', '资料、图标与镜像 · Ctrl+S 保存'],
+      security: ['安全', '账号、IP 与访问控制']
     };
     const t = titles[view] || titles.dashboard;
     $('#viewTitle').textContent = t[0];
@@ -621,7 +655,19 @@
     });
 
     document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && !$('#confirmModal').hidden) closeConfirm(false);
+      if (e.key === 'Escape') {
+        if (!$('#confirmModal').hidden) {
+          closeConfirm(false);
+          return;
+        }
+        if (state.view === 'editor') {
+          setView('apps');
+        }
+      }
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's' && state.view === 'editor') {
+        e.preventDefault();
+        if (!$('#saveAppBtn').disabled) $('#appForm').requestSubmit();
+      }
     });
   }
 

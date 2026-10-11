@@ -27,13 +27,13 @@ shelfhub/
 
 ```bash
 npm install
-copy .dev.vars.example .dev.vars   # Windows；填入 ADMIN_PASSWORD
+copy .dev.vars.example .dev.vars   # Windows；填入 ADMIN_USERNAME / ADMIN_PASSWORD
 npm run db:local                  # 初始化本地 D1 表
 npm run dev                       # http://localhost:8788 左右
 ```
 
 - 前台：`/`  
-- 后台：`/admin/`（使用 `.dev.vars` 里的密码登录）  
+- 后台：`/admin/`（使用 `.dev.vars` 里的账号 + 密码登录；账号默认 `admin`）  
 
 ## 部署到 Cloudflare（连接 GitHub）
 
@@ -59,12 +59,14 @@ npm run db:remote
 2. 选择本仓库；构建命令留空；输出目录填 `.`（或按 Wrangler 的 `pages_build_output_dir`）  
 3. 在项目设置中绑定 D1：变量名 `DB` → 选择 `shelfhub` 库  
 4. 设置 Secrets / 环境变量：  
+   - `ADMIN_USERNAME`（可选，默认 `admin`）  
    - `ADMIN_PASSWORD`（必填，管理员密码；改本地 `.dev.vars` **不会**同步线上）  
    - `ANALYTICS_DASHBOARD_URL`（可选，Web Analytics 控制台链接）  
 
 或用 CLI：
 
 ```bash
+npx wrangler pages secret put ADMIN_USERNAME --project-name=shelfhub
 npx wrangler pages secret put ADMIN_PASSWORD --project-name=shelfhub
 npx wrangler pages deploy . --project-name=shelfhub
 ```
@@ -96,7 +98,7 @@ Cloudflare → Analytics & Logs → Web Analytics → 添加站点。
 
 ### 6. 使用管理后台
 
-打开 `https://你的域名/admin/` →（先过 Access）→ 密码登录 → **新增应用**。  
+打开 `https://你的域名/admin/` →（先过 Access）→ 账号 + 密码登录 → **新增应用**。  
 前台会通过 `GET /api/apps` 读取 D1 数据；详情浏览与镜像点击会写入事件，用于仪表盘热门榜。
 
 ## API 一览

@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&family=Noto+Serif+SC:wght@600;700;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="admin.css?v=20261012c">
+    <link rel="stylesheet" href="admin.css?v=20261012d">
 </head>
 <body>
     <div class="login-screen">
@@ -18,22 +18,32 @@
             <header class="login-brand-block">
                 <p class="login-kicker">ShelfHub Console</p>
                 <h1 class="login-logo">架集</h1>
-                <p class="login-tagline">登录后才能进入管理后台</p>
+                <p class="login-tagline">使用管理员账号与密码登录</p>
             </header>
             <form id="loginForm" class="login-form" autocomplete="on">
                 <label class="field">
-                    <span>管理员密码</span>
+                    <span>账号</span>
+                    <input type="text" id="loginUsername" name="username" required autocomplete="username" placeholder="管理员账号" spellcheck="false" autocapitalize="off">
+                </label>
+                <label class="field">
+                    <span>密码</span>
                     <div class="password-row">
-                        <input type="password" id="loginPassword" name="password" required autocomplete="current-password" placeholder="Cloudflare ADMIN_PASSWORD">
-                        <button type="button" class="text-btn" id="togglePassword">显示</button>
+                        <input type="password" id="loginPassword" name="password" required autocomplete="current-password" placeholder="管理员密码">
+                        <button type="button" class="text-btn" id="togglePassword" aria-pressed="false">显示</button>
                     </div>
                 </label>
-                <p class="field-note">改本地 <code>.dev.vars</code> 不会更新线上密码</p>
-                <p class="form-error" id="loginError" hidden></p>
-                <button type="submit" class="btn-primary btn-wide" id="loginBtn">进入后台</button>
+                <label class="remember-row">
+                    <input type="checkbox" id="rememberUser" checked>
+                    <span>记住账号</span>
+                </label>
+                <p class="field-note">线上账号 / 密码以 Cloudflare 环境变量为准，改本地 <code>.dev.vars</code> 不会同步。</p>
+                <p class="form-error" id="loginError" role="alert" hidden></p>
+                <button type="submit" class="btn-primary btn-wide" id="loginBtn">
+                    <span class="btn-label">进入后台</span>
+                </button>
             </form>
         </div>
     </div>
-    <script src="login.js?v=20261012c"></script>
+    <script src="login.js?v=20261012d"></script>
 </body>
 </html>

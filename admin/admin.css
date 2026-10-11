@@ -112,14 +112,20 @@ code {
 
 .login-form {
     display: grid;
-    gap: 0.85rem;
-    padding-top: 0.5rem;
-    border-top: 1px solid var(--line);
+    gap: 0.95rem;
+    padding: 1.35rem 1.25rem 1.4rem;
+    border: 1px solid var(--line);
+    border-top: 3px solid var(--brand);
+    background: rgb(255 255 255 / 0.72);
+    backdrop-filter: blur(10px);
+    border-radius: 0.2rem;
+    box-shadow: 0 18px 40px rgb(20 40 50 / 0.06);
 }
 
 .field-note {
     font-size: 0.82rem;
     color: var(--muted);
+    line-height: 1.55;
 }
 
 .password-row {
@@ -129,6 +135,28 @@ code {
 }
 
 .password-row input { flex: 1; }
+
+.remember-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.88rem;
+    color: var(--muted);
+    user-select: none;
+    cursor: pointer;
+}
+
+.remember-row input {
+    width: 1rem;
+    height: 1rem;
+    accent-color: var(--brand);
+    border: none;
+    padding: 0;
+}
+
+.login-form .field input:focus {
+    background: rgb(15 110 100 / 0.05);
+}
 
 /* —— Console shell —— */
 .console { min-height: 100vh; }
@@ -216,10 +244,47 @@ code {
     flex-shrink: 0;
 }
 
+.mast-user {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--brand-deep);
+    max-width: 8rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
 .mast-ip {
     font-size: 0.78rem;
     color: var(--muted);
     font-variant-numeric: tabular-nums;
+}
+
+.console[hidden] { display: none !important; }
+
+.apps-table tbody tr.is-clickable { cursor: pointer; }
+
+.badge {
+    display: inline-flex;
+    align-items: center;
+    min-height: 1.4rem;
+    padding: 0.1rem 0.45rem;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    background: var(--brand-wash);
+    color: var(--brand-deep);
+}
+
+.badge.is-warn {
+    background: rgb(200 120 40 / 0.14);
+    color: #8a4f0f;
+}
+
+.toast.is-leaving {
+    opacity: 0;
+    transform: translate(-50%, 8px);
+    transition: opacity 180ms var(--ease), transform 180ms var(--ease);
 }
 
 .console-body {
@@ -849,6 +914,8 @@ input:focus, select:focus {
         gap: 0.65rem 1rem;
         padding: 0.85rem 1rem;
     }
+    .mast-user { max-width: 5.5rem; }
+    .mast-ip { display: none; }
     .mast-nav {
         grid-column: 1 / -1;
         width: 100%;
@@ -856,6 +923,7 @@ input:focus, select:focus {
         border-top: 1px solid var(--line-soft);
         padding-top: 0.35rem;
     }
+    .login-form { padding-inline: 1rem; }
     #statGrid .stat-card,
     .stat-rail .stat-card {
         flex: 1 1 45%;
