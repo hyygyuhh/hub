@@ -766,8 +766,8 @@
             const stars = getGithubStars(app);
             const mirrors = (app.downloadSources || []).length;
             return '<button type="button" class="showcase-card" data-id="' + escapeAttr(app.id) + '">' +
-                '<span class="showcase-card-icon">' + (iconHtml(app) || placeholderIconSvg()) + '</span>' +
-                '<span>' +
+                '<span class="showcase-card-icon" aria-hidden="true">' + (iconHtml(app) || placeholderIconSvg()) + '</span>' +
+                '<span class="showcase-card-body">' +
                 '<span class="showcase-card-name">' + escapeHtml(app.name) + '</span>' +
                 '<span class="showcase-card-meta">' +
                 (app.platform === 'windows' ? 'Windows' : 'Android') +
