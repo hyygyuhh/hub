@@ -901,13 +901,13 @@
                 card.classList.contains('store-promo-card') ||
                 card.classList.contains('post-card')) {
                 const open = (e) => {
-                    if (e.target.closest('.store-install-btn, .btn-download, .btn-ghost, .tag-chip-action, .btn-icon-fav, [data-fav-id]')) return;
+                    if (e.target.closest('.store-install-btn, .btn-download, .btn-ghost, .store-github-cta, .tag-chip-action, .btn-icon-fav, [data-fav-id]')) return;
                     showAppDetail(card.dataset.id);
                 };
                 card.addEventListener('click', open);
                 card.addEventListener('keydown', (e) => {
                     if (e.key === 'Enter' || e.key === ' ') {
-                        if (e.target.closest('.store-install-btn, .btn-download, .btn-ghost, .tag-chip-action, .btn-icon-fav, [data-fav-id]')) return;
+                        if (e.target.closest('.store-install-btn, .btn-download, .btn-ghost, .store-github-cta, .tag-chip-action, .btn-icon-fav, [data-fav-id]')) return;
                         e.preventDefault();
                         showAppDetail(card.dataset.id);
                     }
@@ -1070,8 +1070,29 @@
                 '<span class="tag-chip tag-chip-sm"><span class="tag-chip-label">' +
                 mirrors + ' 个镜像</span></span>'
             );
+        } else {
+            parts.push(
+                '<span class="tag-chip tag-chip-sm tag-chip-warn"><span class="tag-chip-label">暂无镜像</span></span>'
+            );
         }
         return parts.join('');
+    }
+
+    function primaryActionHtml(app) {
+        const mirrors = (app.downloadSources || []).length;
+        const gh = normalizeGithubUrl(app.githubUrl);
+        if (mirrors) {
+            return '<button class="btn-download store-install-btn" data-id="' + escapeAttr(app.id) +
+                '" type="button">镜像下载 · ' + mirrors + '</button>';
+        }
+        if (gh) {
+            return '<a class="btn-download btn-download-ghost store-github-cta" href="' + escapeAttr(gh) +
+                '" target="_blank" rel="noopener noreferrer" data-stop="1">前往 GitHub</a>' +
+                '<button class="btn-ghost store-install-btn" data-id="' + escapeAttr(app.id) +
+                '" type="button">查看镜像</button>';
+        }
+        return '<button class="btn-ghost store-install-btn" data-id="' + escapeAttr(app.id) +
+            '" type="button">暂无镜像</button>';
     }
 
     function renderStoreList(apps, container) {
@@ -1096,8 +1117,8 @@
                         <p class="post-desc">${highlightSearch(app.description, query)}</p>
                         <div class="post-tags">${appTagsHtml(app)}</div>
                         <div class="post-actions">
-                            <button class="btn-download store-install-btn" data-id="${escapeAttr(app.id)}" type="button">镜像下载${mirrors ? ' · ' + mirrors : ''}</button>
-                            <button class="btn-ghost" data-id="${escapeAttr(app.id)}" type="button">查看详情</button>
+                            ${primaryActionHtml(app)}
+                            <button class="btn-ghost" data-id="${escapeAttr(app.id)}" type="button">详情</button>
                             <button class="btn-icon-fav${isFavorite(app.id) ? ' is-active' : ''}" data-fav-id="${escapeAttr(app.id)}" type="button" aria-label="${isFavorite(app.id) ? '取消收藏' : '收藏'}" aria-pressed="${isFavorite(app.id) ? 'true' : 'false'}">
                                 <svg viewBox="0 0 24 24" width="16" height="16" fill="${isFavorite(app.id) ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2" aria-hidden="true">
                                     <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
@@ -1110,9 +1131,13 @@
         }).join('');
 
         bindStoreCardEvents(container);
+        container.querySelectorAll('.store-github-cta, [data-stop]').forEach(el => {
+            el.addEventListener('click', (e) => e.stopPropagation());
+        });
         container.querySelectorAll('.btn-ghost').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 e.stopPropagation();
+                if (btn.classList.contains('store-install-btn')) return;
                 showAppDetail(btn.dataset.id);
             });
         });
@@ -1986,7 +2011,9 @@
                             <span class="store-badge store-badge-github">GitHub 开源</span>
                             ${stars ? '<span class="store-badge">★ ' + formatGithubStars(stars) + '</span>' : ''}
                             ${isHotApp(app) ? '<span class="store-badge store-badge-hot">热门</span>' : ''}
-                            ${mirrors.length ? '<span class="store-badge">' + mirrors.length + ' 个镜像</span>' : ''}
+                            ${mirrors.length
+                                ? '<span class="store-badge">' + mirrors.length + ' 个镜像</span>'
+                                : '<span class="store-badge store-badge-warn">暂无镜像</span>'}
                         </div>
                         ${githubUrl ? `
                         <a class="store-github-link" href="${escapeAttr(githubUrl)}" target="_blank" rel="noopener noreferrer">
@@ -2003,7 +2030,7 @@
                                     <polyline points="7 10 12 15 17 10"/>
                                     <line x1="12" y1="15" x2="12" y2="3"/>
                                 </svg>
-                                镜像下载
+                                ${mirrors.length ? '镜像下载' : (githubUrl ? '获取下载' : '暂无镜像')}
                             </button>
                             <button class="store-fav-btn${isFavorite(app.id) ? ' is-active' : ''}" id="detailFavBtn" type="button" aria-pressed="${isFavorite(app.id) ? 'true' : 'false'}" aria-label="${isFavorite(app.id) ? '取消收藏' : '收藏'}">
                                 <svg viewBox="0 0 24 24" width="16" height="16" fill="${isFavorite(app.id) ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2" aria-hidden="true">
@@ -2029,13 +2056,17 @@
 
                 ${renderDetailIntro(app)}
 
-                ${mirrors.length ? `
                 <section class="store-section">
                     <h2 class="store-section-title">国内镜像</h2>
+                    ${mirrors.length ? `
                     <div class="download-sources-list detail-mirrors" id="detailMirrors">
                         ${renderDownloadSources(mirrors)}
-                    </div>
-                </section>` : ''}
+                    </div>` : `
+                    <div class="mirror-empty">
+                        <p>暂未配置夸克 / 百度镜像。可先从上游仓库获取安装包，镜像会陆续补齐。</p>
+                        ${githubUrl ? '<a class="btn-download btn-download-ghost" href="' + escapeAttr(githubUrl) + '" target="_blank" rel="noopener noreferrer">打开 GitHub Release</a>' : ''}
+                    </div>`}
+                </section>
 
                 <section class="store-section">
                     <h2 class="store-section-title">应用信息</h2>
@@ -2183,9 +2214,9 @@
             <div class="detail-sticky-inner">
                 <div class="detail-sticky-info">
                     <strong>${escapeHtml(app.name)}</strong>
-                    <span>${escapeHtml(app.version || '')}${mirrors ? ' · ' + mirrors + ' 镜像' : ''}</span>
+                    <span>${escapeHtml(app.version || '')}${mirrors ? ' · ' + mirrors + ' 镜像' : ' · 暂无镜像'}</span>
                 </div>
-                <button type="button" class="btn-download" id="stickyDownloadBtn">下载</button>
+                <button type="button" class="btn-download" id="stickyDownloadBtn">${mirrors ? '镜像下载' : '获取下载'}</button>
             </div>
         `;
         bar.hidden = false;
