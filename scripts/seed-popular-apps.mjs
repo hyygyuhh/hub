@@ -447,7 +447,7 @@ const lines = [
 for (const app of apps) {
   const features = JSON.stringify(app.features || []);
   const owner = (app.github_url.match(/github\.com\/([^/]+)/) || [])[1] || '';
-  const iconUrl = owner ? `https://github.com/${owner}.png` : '';
+  const iconUrl = owner ? `https://avatars.githubusercontent.com/${owner}?s=128` : '';
 
   lines.push(`INSERT OR IGNORE INTO apps (
   id, name, platform, category, category_name, description, features,

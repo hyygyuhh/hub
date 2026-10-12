@@ -56,16 +56,32 @@
      * - Empty/missing returns ''.
      * Supports both image path/URL icons and inline SVG markup.
      */
+    function resolveIconUrl(icon) {
+        if (!icon) return '';
+        const raw = String(icon).trim();
+        // github.com/{owner}.png often times out in CN; prefer avatars CDN.
+        const m = /^https?:\/\/github\.com\/([^/?#]+)\.png\/?$/i.exec(raw);
+        if (m) return 'https://avatars.githubusercontent.com/' + encodeURIComponent(m[1]) + '?s=128';
+        return raw;
+    }
+
+    function letterAvatarHtml(name) {
+        const label = String(name || '?').trim();
+        const letter = escapeHtml((label.match(/[A-Za-z0-9\u4e00-\u9fff]/) || ['?'])[0].slice(0, 1).toUpperCase());
+        return '<span class="app-icon-letter" aria-hidden="true">' + letter + '</span>';
+    }
+
     function iconHtml(app) {
         const icon = app && app.icon;
-        if (!icon) return '';
+        if (!icon) return letterAvatarHtml(app && app.name);
         if (/<svg|<img/i.test(icon)) return icon;
+        const resolved = resolveIconUrl(icon);
         const alt = escapeAttr((app && app.name) || '') + ' 图标';
-        const src = escapeAttr(icon);
-        // Built via concatenation (not a template literal) so the closing
-        // backtick can never get mangled into a quote by tooling.
+        const src = escapeAttr(resolved);
+        // onerror swaps to letter avatar (github.com/*.png is often blocked in CN).
         return '<img class="app-icon-img" src="' + src + '" alt="' + alt +
-            '" loading="lazy" decoding="async" onerror="this.classList.add(\'app-icon-img-broken\')">';
+            '" loading="lazy" decoding="async" referrerpolicy="no-referrer" ' +
+            'onerror="this.replaceWith(Object.assign(document.createElement(\'span\'),{className:\'app-icon-letter\',textContent:(this.alt||\'?\').trim().charAt(0)||\'?\'}))">';
     }
 
     function normalizeGithubUrl(url) {

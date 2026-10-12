@@ -1769,6 +1769,21 @@ button.showcase-card > * {
 
 .app-icon-img-broken { opacity: 0.35; }
 
+.app-icon-letter {
+    display: grid;
+    place-items: center;
+    width: 100%;
+    height: 100%;
+    font-family: var(--font-serif);
+    font-weight: 700;
+    font-size: 1.05em;
+    letter-spacing: -0.02em;
+    color: rgb(var(--color-brand));
+    background:
+        linear-gradient(145deg, rgb(var(--color-brand) / 0.14), rgb(var(--color-canvas)));
+    user-select: none;
+}
+
 /* Featured extras */
 .featured-meta {
     display: flex;
